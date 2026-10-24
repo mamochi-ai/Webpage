@@ -219,7 +219,7 @@
   }
 
   const thumb = (w) => w.image
-    ? `<img src="${esc(w.image)}" alt="" loading="lazy" style="width:100%;height:100%;object-fit:cover">`
+    ? `<img src="${esc(w.image)}" alt="" loading="lazy" style="width:100%;height:100%;object-fit:cover;object-position:top left">`
     : w.type === "web" ? thumbWeb({ ...w.thumb, title: w.title })
     : w.type === "game" ? thumbGame(w.thumb)
     : thumbSticker(w);
