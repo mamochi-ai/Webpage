@@ -1,0 +1,9 @@
+# パソコンから wrangler で公開する場合の設定（Cloudflare の画面だけで作る場合は不要）
+name = "mamochi-stats"
+main = "worker.js"
+compatibility_date = "2026-10-01"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "mamochi-stats"
+database_id = "ここに D1 の database_id を入れる"

@@ -318,6 +318,69 @@
   }
 
   /* =======================================================
+     Access ranking (counts kept by stats-worker/worker.js)
+     ======================================================= */
+  const STATS = (SITE.statsApi || "").replace(/\/$/, "");
+  const RANKED = new Set(["web", "game"]);
+  function track(id, kind) {
+    const w = WORKS.find((w) => w.id === id);
+    if (!STATS || !w || !RANKED.has(w.type)) return;
+    const key = `hit:${id}:${kind}`;
+    try { if (sessionStorage.getItem(key)) return; sessionStorage.setItem(key, "1"); } catch (e) {}
+    const body = JSON.stringify({ id, kind });
+    try {
+      if (!navigator.sendBeacon || !navigator.sendBeacon(`${STATS}/hit`, body)) {
+        fetch(`${STATS}/hit`, { method: "POST", body, keepalive: true, mode: "cors" }).catch(() => {});
+      }
+    } catch (e) {}
+  }
+
+  const rankEl = $("#ranking");
+  if (STATS && rankEl) {
+    const rank = { type: "web", days: "30", data: {} };
+    const load = (days) => rank.data[days] || (rank.data[days] = fetch(`${STATS}/ranking?days=${days === "all" ? "all" : 30}`)
+      .then((r) => (r.ok ? r.json() : Promise.reject(r.status)))
+      .then((d) => d.items || [])
+      .catch(() => { delete rank.data[days]; return null; }));
+    const render = async () => {
+      const list = $("#rank-list");
+      const items = await load(rank.days);
+      if (items === null) { list.innerHTML = `<li class="rank__empty">ランキングを読み込めませんでした。</li>`; return; }
+      const score = (x) => x.view + x.open;
+      const rows = items
+        .map((x) => ({ ...x, w: WORKS.find((w) => w.id === x.id) }))
+        .filter((x) => x.w && x.w.type === rank.type && score(x) > 0)
+        .sort((a, b) => score(b) - score(a) || b.open - a.open)
+        .slice(0, 5);
+      if (!rows.length) { list.innerHTML = `<li class="rank__empty">まだ集計中です。作品を開くと、ここに順位が出ます。</li>`; return; }
+      const top = score(rows[0]);
+      list.innerHTML = rows.map((x, i) => `
+        <li class="rank__row">
+          <button type="button" class="rank__btn" data-open="${esc(x.w.id)}">
+            <span class="rank__no">${i + 1}</span>
+            <span class="rank__thumb">${thumb(x.w)}</span>
+            <span class="rank__title">${esc(x.w.title)}<small>${esc(x.w.summary)}</small></span>
+            <span class="rank__score">
+              <span class="rank__bar"><i style="width:${Math.max(6, Math.round((score(x) / top) * 100))}%"></i></span>
+              <span class="mono">詳細 ${x.view}・開いた ${x.open}</span>
+            </span>
+          </button>
+        </li>`).join("");
+    };
+    rankEl.addEventListener("click", (e) => {
+      const b = e.target.closest("[data-rank-type], [data-rank-days]");
+      if (!b) return;
+      if (b.dataset.rankType) rank.type = b.dataset.rankType;
+      if (b.dataset.rankDays) rank.days = b.dataset.rankDays;
+      $$("[data-rank-type]", rankEl).forEach((x) => x.setAttribute("aria-pressed", x.dataset.rankType === rank.type));
+      $$("[data-rank-days]", rankEl).forEach((x) => x.setAttribute("aria-pressed", x.dataset.rankDays === rank.days));
+      render();
+    });
+    rankEl.hidden = false;
+    new IntersectionObserver(([e], o) => { if (e.isIntersecting) { render(); o.disconnect(); } }, { rootMargin: "200px" }).observe(rankEl);
+  }
+
+  /* =======================================================
      Detail sheet
      ======================================================= */
   const sheet = $("#sheet");
@@ -338,12 +401,15 @@
       <div class="sheet__actions">
         ${w.type === "sticker"
           ? `<a class="btn btn--line" href="${esc(w.url)}" target="_blank" rel="noopener">LINE STOREで見る ↗</a><button type="button" class="btn btn--ghost" data-goto-set="${esc(w.set)}">トークで試す</button>`
-          : `<a class="btn" href="${esc(w.url)}" ${isExternal ? 'target="_blank" rel="noopener"' : ""}>${w.type === "game" ? "遊んでみる" : "サイトを見る"} ↗</a>`}
+          : `<a class="btn" href="${esc(w.url)}" data-track-open="${esc(w.id)}" ${isExternal ? 'target="_blank" rel="noopener"' : ""}>${w.type === "game" ? "遊んでみる" : "サイトを見る"} ↗</a>`}
       </div>`;
     sheet.style.setProperty("--cat", CAT[w.type].color);
     sheet.showModal();
+    track(w.id, "view");
   }
   document.addEventListener("click", (e) => {
+    const t = e.target.closest("[data-track-open]");
+    if (t) track(t.dataset.trackOpen, "open");
     const o = e.target.closest("[data-open]");
     if (o) { openWork(o.dataset.open); return; }
     const g = e.target.closest("[data-goto-set]");

@@ -15,7 +15,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&family=Zen+Maru+Gothic:wght@700;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/style.css?v=20261024c">
+  <link rel="stylesheet" href="assets/css/style.css?v=20261024d">
   <script>
     try { const t = localStorage.getItem("theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
   </script>
@@ -78,6 +78,25 @@
         <span>Web Systems</span><i></i><span>Games</span><i></i><span>LINE Stickers</span><i></i>
       </div>
     </div>
+
+    <!-- ============ RANKING（SITE.statsApi があるときだけ表示） ============ -->
+    <section class="rank wrap" id="ranking" data-section="—" data-label="Ranking" hidden>
+      <div class="rank__head">
+        <h2 class="h-sec">Ranking<span class="sec__ja">よく見られている作品</span></h2>
+        <div class="rank__controls">
+          <div class="filters" role="group" aria-label="カテゴリ">
+            <button type="button" class="chip" data-rank-type="web" aria-pressed="true"><i class="dot dot--web"></i>Web System</button>
+            <button type="button" class="chip" data-rank-type="game" aria-pressed="false"><i class="dot dot--game"></i>Game</button>
+          </div>
+          <div class="filters" role="group" aria-label="期間">
+            <button type="button" class="chip" data-rank-days="30" aria-pressed="true">30日</button>
+            <button type="button" class="chip" data-rank-days="all" aria-pressed="false">累計</button>
+          </div>
+        </div>
+      </div>
+      <ol class="rank__list" id="rank-list"><li class="rank__empty">読み込み中…</li></ol>
+      <p class="rank__note mono">このサイトで作品の詳細を開いた回数と、作品を開いた回数を数えています（同じ人は1日1回まで）。</p>
+    </section>
 
     <!-- ============ INDEX ============ -->
     <section class="index wrap" id="works" data-section="—" data-label="Index">
@@ -204,7 +223,7 @@
 
   <footer class="ftr wrap">
     <span class="mono">© <span id="year"></span> mamochi</span>
-    <span class="mono">Thanks for visiting.</span>
+    <span class="mono">作品ごとの閲覧回数だけを数えています。個人を特定する情報は保存しません。</span>
     <a href="#top" class="mono">Back to top ↑</a>
   </footer>
 
@@ -221,7 +240,7 @@
 
   <div class="toast mono" id="toast" role="status"></div>
 
-  <script src="assets/js/data.js?v=20261024c"></script>
-  <script src="assets/js/main.js?v=20261024c"></script>
+  <script src="assets/js/data.js?v=20261024d"></script>
+  <script src="assets/js/main.js?v=20261024d"></script>
 </body>
 </html>
