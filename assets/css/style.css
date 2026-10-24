@@ -392,7 +392,7 @@ kbd { font-family: var(--mono); font-size: 11px; border: 1px solid var(--line-2)
 .stk-thumb img:nth-child(4) { right: 2%; bottom: 22%; }
 
 /* ---------- stickers ---------- */
-.stk { display: grid; grid-template-columns: 1fr 340px; gap: clamp(24px, 4vw, 64px); align-items: start; }
+.stk { display: grid; grid-template-columns: minmax(0, 1fr) clamp(280px, 28vw, 340px); gap: clamp(24px, 4vw, 64px); align-items: start; }
 .stk__tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 24px; }
 .stk__tabs .chip[aria-selected="true"] { background: var(--sticker); border-color: var(--sticker); color: #fff; }
 .stk__info { display: grid; grid-template-columns: 1fr auto; gap: 8px 24px; align-items: end; margin-bottom: 24px; }
