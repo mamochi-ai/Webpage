@@ -99,6 +99,20 @@ window.WORKS = [
     url: "https://claude.ai/artifact/77UAUKUHgRoi4rRXK4sThc",
     image: "assets/img/works/ippin.webp",
   },
+  {
+    id: "bugworks",
+    type: "game",
+    title: "BUGWORKS",
+    titleJa: "バグワークス",
+    year: 2026,
+    summary: "レールや歯車を組んで鉄球をゴールへ運ぶ、3D物理工作パズル。",
+    description:
+      "研究所の床に、レール・カーブ・発射機・バネ・歯車・可動橋・磁石・スイッチ・ループなどの装置を置いてつなぎ、鉄球をゴールまで届ける3Dの物理パズル。ステージは1-1〜4-5の20面と、制限なしで置ける「自由研究」。研究所のロボット S-404 いわく「バグは……仕様です」。隠しバグの図鑑や、配置が永久機関かどうかを検証する機能も。現在は試作版です。",
+    role: "企画・制作",
+    stack: ["Three.js", "Rapier（物理演算）", "TypeScript", "Vite"],
+    url: "https://mamochi-ai.github.io/BUGWORKS/",
+    image: "assets/img/works/bugworks.webp",
+  },
 
   {
     id: "maeba-beaver",
