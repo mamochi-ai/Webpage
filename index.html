@@ -15,7 +15,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&family=Zen+Maru+Gothic:wght@700;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/style.css?v=20261024i">
+  <link rel="stylesheet" href="assets/css/style.css?v=20261024j">
   <script>
     try { const t = localStorage.getItem("theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
   </script>
@@ -123,8 +123,13 @@
       <header class="sec__head" data-reveal>
         <span class="sec__no mono">01</span>
         <h2 class="h-sec">Web Systems<span class="sec__ja">ウェブシステム</span></h2>
-        <p class="sec__desc">登録なし、インストールなし、データは自分の端末の中だけ。ブラウザで開けばすぐに使える、身軽な道具をつくっています。</p>
+        <p class="sec__desc">登録なし、インストールなし。ブラウザで開けばすぐに使える、身軽な道具をつくっています。</p>
       </header>
+      <div class="local" data-reveal>
+        <svg class="local__icon" viewBox="0 0 48 48" aria-hidden="true"><rect x="11" y="4" width="26" height="40" rx="5" fill="none" stroke="currentColor" stroke-width="2.4"/><rect x="18" y="19" width="12" height="10" rx="2" fill="currentColor"/><path d="M20.5 19v-3a3.5 3.5 0 0 1 7 0v3" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M21 38h6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
+        <p class="local__title"><span>データは、</span><span><em>あなたの端末の中だけ</em>。</span></p>
+        <p class="local__body">入力した内容や写真は、外部のサーバーに送りません。アカウント登録も不要です。<br class="pc">そのぶん、ブラウザのデータを消すと消えてしまうので、大事なものはバックアップを書き出してください。</p>
+      </div>
       <div class="web-grid" id="web-grid"></div>
     </section>
 
@@ -253,7 +258,7 @@
 
   <div class="toast mono" id="toast" role="status"></div>
 
-  <script src="assets/js/data.js?v=20261024i"></script>
-  <script src="assets/js/main.js?v=20261024i"></script>
+  <script src="assets/js/data.js?v=20261024j"></script>
+  <script src="assets/js/main.js?v=20261024j"></script>
 </body>
 </html>

@@ -30,6 +30,7 @@ window.WORKS = [
     stack: ["Canvas 2D", "IndexedDB", "JavaScript"],
     url: "https://mamochi-ai.github.io/naildesigner/",
     image: "assets/img/works/naildesigner.webp",
+    local: true,
   },
   {
     id: "notepaste",
@@ -44,6 +45,7 @@ window.WORKS = [
     stack: ["Clipboard API", "IndexedDB", "JavaScript"],
     url: "https://mamochi-ai.github.io/notepaste/",
     image: "assets/img/works/notepaste.webp",
+    local: true,
   },
   {
     id: "zero-invoice",
@@ -58,6 +60,7 @@ window.WORKS = [
     stack: ["JavaScript", "localStorage", "Cloudflare Workers"],
     url: "https://mamochi-ai.github.io/automoney/",
     image: "assets/img/works/zero-invoice.webp",
+    local: true,
   },
   {
     id: "study-sakura",
@@ -72,6 +75,7 @@ window.WORKS = [
     stack: ["React", "TypeScript", "pdf.js", "TipTap", "IndexedDB"],
     url: "https://mamochi-ai.github.io/study-sakura/",
     image: "assets/img/works/study-sakura.webp",
+    local: true,
   },
   {
     id: "miseru-techo",
@@ -86,6 +90,7 @@ window.WORKS = [
     stack: ["React", "TypeScript", "IndexedDB（AES-GCM暗号化）", "PWA"],
     url: "https://miseru-techo.pages.dev",
     image: "assets/img/works/miseru-techo.webp",
+    local: true,
   },
 
   {

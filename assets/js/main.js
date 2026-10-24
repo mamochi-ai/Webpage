@@ -206,12 +206,14 @@
       </button>
     </li>`).join("");
 
+  const LOCK = `<svg viewBox="0 0 12 12" aria-hidden="true"><rect x="2" y="5.5" width="8" height="6" rx="1.2" fill="currentColor"/><path d="M4 5.5V4a2 2 0 0 1 4 0v1.5" fill="none" stroke="currentColor" stroke-width="1.4"/></svg>`;
   const cardHtml = (w, i) => `
     <button type="button" class="card" data-open="${esc(w.id)}" data-reveal style="transition-delay:${(i % 2) * 90}ms">
       <span class="card__media ${w.type === "game" ? "card__media--pixel" : ""}">${thumb(w)}</span>
       <span class="card__meta mono"><span>${CAT[w.type].label} / ${pad(i + 1)}</span><span>${w.year}</span></span>
       <h3 class="card__title">${esc(w.title)}<small>${esc(w.titleJa)}</small></h3>
       <p class="card__sum">${esc(w.summary)}</p>
+      ${w.local ? `<span class="badge-local">${LOCK}データは端末内だけ</span>` : ""}
       <p class="card__desc">${esc(w.description)}</p>
       <span class="card__cta mono">詳しく見る →</span>
       <ul class="tags">${w.stack.map((s) => `<li>${esc(s)}</li>`).join("")}</ul>
@@ -418,6 +420,7 @@
       <span class="sheet__cat mono"><i class="dot dot--${w.type}"></i>${CAT[w.type].label} — ${w.year}</span>
       <h3 id="sheet-title">${esc(w.title)}<small>${esc(w.titleJa)}</small></h3>
       <p>${esc(w.description)}</p>
+      ${w.local ? `<span class="badge-local">${LOCK}入力したデータは端末の中だけに保存され、外部に送信されません</span>` : ""}
       <dl>
         <div><dt class="mono">Role</dt><dd>${esc(w.role)}</dd></div>
         <div><dt class="mono">${w.type === "sticker" || w.type === "booth" ? "Info" : "Stack"}</dt><dd>${esc(w.stack.join(" / "))}</dd></div>
