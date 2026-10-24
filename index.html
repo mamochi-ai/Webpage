@@ -50,8 +50,8 @@
     <section class="hero" data-section="00" data-label="Intro">
       <div class="hero__meta mono">
         <span>Selected works</span>
-        <span>2019 — 2026</span>
-        <span>Tokyo, JP <time id="clock">--:--</time></span>
+        <span>2026 —</span>
+        <span>JST <time id="clock">--:--</time></span>
       </div>
 
       <h1 class="hero__title">
@@ -110,12 +110,14 @@
       <header class="sec__head" data-reveal>
         <span class="sec__no mono">02</span>
         <h2 class="h-sec">Games<span class="sec__ja">ゲーム</span></h2>
-        <p class="sec__desc">ワンボタンで遊べるものから、じっくり考えるパズルまで。ドット絵も音も自分でつくっています。</p>
+        <p class="sec__desc">積んで、固定して、運ぶ。荷物が物理演算で本当に揺れて落ちる、ちょっと無茶な引っ越しゲームです。</p>
       </header>
+
+      <div class="game-list" id="game-list"></div>
 
       <div class="play" id="play" data-reveal>
         <div class="play__bar mono">
-          <span><i class="rec"></i>Now playable — Mochi Hop</span>
+          <span><i class="rec"></i>Bonus — このサイトのおまけ「Mochi Hop」</span>
           <span class="play__keys"><kbd>Space</kbd> / <kbd>↑</kbd> / タップでジャンプ</span>
         </div>
         <div class="play__stage">
@@ -126,8 +128,6 @@
           <span>Best <b id="g-best">0</b></span>
         </div>
       </div>
-
-      <div class="game-list" id="game-list"></div>
     </section>
 
     <!-- ============ STICKERS ============ -->
@@ -166,22 +166,22 @@
           ちゃんと<em>手になじむ</em>ものを。
         </p>
         <p class="about__body">
-          業務の小さな不便をなくすシステム、すきま時間に遊べるゲーム、言葉のかわりに気持ちを届けるスタンプ。形はちがっても、使う人の手ざわりを想像しながら、企画から実装・デザインまでひとりで仕上げています。
+          毎日の小さな不便をなくすウェブアプリ、すきま時間に遊べるゲーム、言葉のかわりに気持ちを届けるスタンプ。形はちがっても、使う人の手ざわりを想像しながら、企画から実装・デザインまでひとりで仕上げています。
         </p>
       </div>
 
       <div class="about__side" data-reveal>
         <dl class="tools">
-          <div><dt class="mono">Frontend</dt><dd>TypeScript, React, Next.js, Vue</dd></div>
-          <div><dt class="mono">Backend</dt><dd>Node.js, Go, Laravel, Supabase</dd></div>
-          <div><dt class="mono">Game</dt><dd>Unity, Godot, Canvas</dd></div>
-          <div><dt class="mono">Design</dt><dd>Figma, Illustrator, Procreate</dd></div>
+          <div><dt class="mono">Frontend</dt><dd>TypeScript, React, Vite, JavaScript</dd></div>
+          <div><dt class="mono">Storage</dt><dd>IndexedDB, localStorage（端末内保存）</dd></div>
+          <div><dt class="mono">Platform</dt><dd>PWA, GitHub Pages, Cloudflare</dd></div>
+          <div><dt class="mono">Game</dt><dd>Canvas, Planck.js</dd></div>
         </dl>
         <ol class="process">
-          <li><span class="mono">01</span><b>聞く</b><p>困っていることを、作業の手順ごと聞かせてもらいます。</p></li>
-          <li><span class="mono">02</span><b>描く</b><p>画面を紙とFigmaで描いて、触れる試作で確かめます。</p></li>
-          <li><span class="mono">03</span><b>つくる</b><p>小さく出して、使われ方を見ながら直します。</p></li>
-          <li><span class="mono">04</span><b>育てる</b><p>公開後も、不具合対応や改善を続けます。</p></li>
+          <li><span class="mono">01</span><b>気づく</b><p>自分や身近な人の「ちょっと不便」を見つけます。</p></li>
+          <li><span class="mono">02</span><b>試す</b><p>まず触れる試作をつくって、できるかどうか確かめます。</p></li>
+          <li><span class="mono">03</span><b>つくる</b><p>小さく公開して、使いながら直します。</p></li>
+          <li><span class="mono">04</span><b>育てる</b><p>公開したあとも、少しずつ良くしていきます。</p></li>
         </ol>
       </div>
     </section>
@@ -189,9 +189,9 @@
     <!-- ============ CONTACT ============ -->
     <section class="contact wrap" id="contact" data-section="05" data-label="Contact">
       <span class="sec__no mono">05 — Contact</span>
-      <p class="contact__lead">お仕事のご相談、作品の感想、なんでもどうぞ。</p>
-      <a class="contact__mail" id="mail" href="mailto:hello@example.com">
-        <span id="mail-text">hello@example.com</span><span class="contact__arrow" aria-hidden="true">↗</span>
+      <p class="contact__lead">作品についてご質問などあれば、こちらからどうぞ。</p>
+      <a class="contact__mail" id="mail" href="mailto:miseru.techo@gmail.com">
+        <span id="mail-text">miseru.techo@gmail.com</span><span class="contact__arrow" aria-hidden="true">↗</span>
       </a>
       <div class="contact__row">
         <button type="button" class="btn btn--ghost" id="copy">アドレスをコピー</button>
@@ -202,7 +202,7 @@
 
   <footer class="ftr wrap">
     <span class="mono">© <span id="year"></span> mamochi</span>
-    <span class="mono">Designed &amp; built by hand.</span>
+    <span class="mono">Thanks for visiting.</span>
     <a href="#top" class="mono">Back to top ↑</a>
   </footer>
 

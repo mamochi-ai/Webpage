@@ -348,11 +348,22 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .card__title { margin: 0; font-size: clamp(24px, 2.4vw, 34px); font-weight: 500; letter-spacing: -.035em; line-height: 1.1; }
 .card__title small { font-family: var(--jp); font-size: 13px; color: var(--muted); font-weight: 500; letter-spacing: .04em; margin-left: 10px; }
 .card__sum { margin: -6px 0 0; font-family: var(--jp); color: var(--ink-2); font-size: 14.5px; }
+.card__desc, .card__cta { display: none; }
+.game-list > .card:only-child .card__desc { display: block; margin: 0; font-family: var(--jp); font-size: 14px; line-height: 1.95; color: var(--ink-2); }
+.game-list > .card:only-child .card__cta { display: inline-flex; align-self: start; justify-self: start; margin-top: 6px; padding: 10px 18px; border-radius: 999px; background: var(--ink); color: var(--paper); text-transform: none; transition: transform .35s var(--spring); }
+.game-list > .card:only-child:hover .card__cta { transform: translateX(4px); }
 .web-grid:has(> .card:nth-child(3):last-child) > .card { grid-column: span 4; }
+.web-grid:has(> .card:nth-child(5):last-child) > .card:nth-child(n+3) { grid-column: span 4; }
+.game-list:has(> .card:only-child) { grid-template-columns: 1fr; }
+.game-list > .card:only-child { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); column-gap: clamp(20px, 3vw, 48px); row-gap: 14px; align-content: start; }
+.game-list > .card:only-child .card__media { grid-row: 1 / span 7; }
+.game-list > .card:only-child .card__meta { margin-top: 4px; }
+.game-list + .play { margin: clamp(48px, 7vw, 96px) 0 0; }
 .card__media img { transition: transform 1s var(--ease); }
 .card:hover .card__media img { transform: scale(1.035); }
 @media (max-width: 860px) {
-  .card, .card:nth-child(n), .web-grid:has(> .card:nth-child(3):last-child) > .card { grid-column: 1 / -1; }
+  .card, .card:nth-child(n), .web-grid:has(> .card:nth-child(3):last-child) > .card, .web-grid:has(> .card:nth-child(5):last-child) > .card:nth-child(n+3) { grid-column: 1 / -1; }
+  .game-list > .card:only-child { display: flex; }
 }
 
 /* ---------- games ---------- */
@@ -470,7 +481,7 @@ kbd { font-family: var(--mono); font-size: 11px; border: 1px solid var(--line-2)
 .contact__lead { font-family: var(--jp); margin: 24px 0 8px; color: var(--ink-2); }
 .contact__mail {
   display: inline-flex; align-items: center; gap: .2em; max-width: 100%;
-  font-size: clamp(34px, 8.6vw, 148px); font-weight: 600; letter-spacing: -.055em; line-height: 1.05;
+  font-size: clamp(26px, 6.4vw, 104px); font-weight: 600; letter-spacing: -.05em; line-height: 1.05;
   background: linear-gradient(currentColor, currentColor) 0 100% / 0 3px no-repeat;
   transition: background-size .6s var(--ease);
   overflow-wrap: anywhere;

@@ -255,6 +255,8 @@
       <span class="card__meta mono"><span>${CAT[w.type].label} / ${pad(i + 1)}</span><span>${w.year}</span></span>
       <h3 class="card__title">${esc(w.title)}<small>${esc(w.titleJa)}</small></h3>
       <p class="card__sum">${esc(w.summary)}</p>
+      <p class="card__desc">${esc(w.description)}</p>
+      <span class="card__cta mono">詳しく見る →</span>
       <ul class="tags">${w.stack.map((s) => `<li>${esc(s)}</li>`).join("")}</ul>
     </button>`;
   $("#web-grid").innerHTML = byType("web").map(cardHtml).join("");

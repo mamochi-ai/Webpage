@@ -12,7 +12,7 @@ npx serve .   # または python3 -m http.server
 
 ## 内容の編集
 
-作品情報は **`assets/js/data.js` だけ** 編集すれば反映されます（※現在の作品・URL・メールアドレスは仮の内容です）。
+作品情報は **`assets/js/data.js` だけ** 編集すれば反映されます。
 
 | 項目 | 内容 |
 | --- | --- |

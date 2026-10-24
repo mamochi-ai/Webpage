@@ -1,16 +1,13 @@
 /* ------------------------------------------------------------------
    サイトの中身はこのファイルだけ編集すればOKです。
-   ※ 現在の作品・URL・メールアドレスはすべて仮のものです。
-     ご自身の作品情報に差し替えてください。
 ------------------------------------------------------------------- */
 
 window.SITE = {
   name: "mamochi",
-  email: "hello@example.com",
+  email: "miseru.techo@gmail.com",
   links: [
-    { label: "GitHub", url: "https://github.com/" },
-    { label: "X", url: "https://x.com/" },
-    { label: "LINE STORE", url: "https://store.line.me/" },
+    { label: "GitHub", url: "https://github.com/mamochi-ai" },
+    { label: "LINE STORE", url: "https://store.line.me/stickershop/author/6676247/ja" },
   ],
 };
 
@@ -73,49 +70,34 @@ window.WORKS = [
     url: "https://mamochi-ai.github.io/study-sakura/",
     image: "assets/img/works/study-sakura.webp",
   },
+  {
+    id: "miseru-techo",
+    type: "web",
+    title: "みせる健康手帳",
+    titleJa: "Miseru Techo",
+    year: 2026,
+    summary: "救急や受診のときに、画面を見せて伝える健康手帳。",
+    description:
+      "アレルギー・持病・薬・血圧・書類の写真を登録しておき、救急隊や医師に画面を見せて伝えるためのアプリ。50〜80歳の方を想定し、文字とボタンを大きく、入力はできるだけ「選ぶ」形にしました。薬局の明細書のQRコードから薬を登録、ロック画面用の緊急カードの作成、6言語表示、家族の分の管理に対応。データは端末の中だけに暗号化して保存し、どこにも送りません。",
+    role: "企画・制作",
+    stack: ["React", "TypeScript", "IndexedDB（AES-GCM暗号化）", "PWA"],
+    url: "https://miseru-techo.pages.dev",
+    image: "assets/img/works/miseru-techo.webp",
+  },
 
   {
-    id: "mochihop",
+    id: "ippin",
     type: "game",
-    title: "Mochi Hop",
-    titleJa: "もちホップ",
-    year: 2025,
-    summary: "だんごをよけて跳ねつづける、ワンボタンのランゲーム。",
+    title: "一便でいけます。",
+    titleJa: "Ippin de Ikemasu",
+    year: 2026,
+    summary: "絶対に一便で運びたい引っ越し屋の、積み込み＆運転ゲーム。",
     description:
-      "スペースキーかタップだけで遊べるエンドレスランナー。だんだん速くなるだんご串を、もちが跳んでよけます。このページの上で、そのまま遊べます。",
-    role: "ゲームデザイン / プログラム / ドット絵",
-    stack: ["HTML5 Canvas", "JavaScript"],
-    url: "#play",
-    playable: true,
-    thumb: { scene: "hop", seed: 3 },
-  },
-  {
-    id: "neonkitchen",
-    type: "game",
-    title: "Neon Kitchen",
-    titleJa: "ネオンキッチン",
-    year: 2024,
-    summary: "制限時間内に注文をさばく、せわしない料理パズル。",
-    description:
-      "流れてくる注文に合わせて具材を組み合わせるアクションパズル。1ステージ90秒、全30ステージ。ローカル2人協力プレイ対応。",
-    role: "企画 / プログラム / UI",
-    stack: ["Unity", "C#"],
-    url: "#",
-    thumb: { scene: "kitchen", seed: 8 },
-  },
-  {
-    id: "hoshinomichi",
-    type: "game",
-    title: "Hoshi no Michi",
-    titleJa: "ほしのみち",
-    year: 2023,
-    summary: "星座を一筆書きでつなぐ、静かなパズル。",
-    description:
-      "夜空の星を一筆書きでつないで星座を完成させるパズル。全60問。BGMは自作で、寝る前に遊べるように音もゆっくりめ。",
-    role: "企画 / プログラム / サウンド",
-    stack: ["Godot", "GDScript"],
-    url: "#",
-    thumb: { scene: "stars", seed: 19 },
+      "小さなトラックに、冷蔵庫も棚も段ボールもボウリング球も全部積む。ベルト3本で固定したら、アクセルとブレーキだけで段差と坂と、なぜか巨大な磁石を越えて届けます。荷物は物理演算で本当に揺れて、落ちます。積み方はそのままに、運転だけ何度でもやり直せます。全3ステージ。",
+    role: "企画・制作",
+    stack: ["Canvas", "Planck.js（物理演算）", "JavaScript"],
+    url: "https://claude.ai/artifact/77UAUKUHgRoi4rRXK4sThc",
+    image: "assets/img/works/ippin.webp",
   },
 
   {
