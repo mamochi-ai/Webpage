@@ -169,6 +169,7 @@ window.WORKS = [
     role: "企画・制作",
     stack: ["PDF・PNG（ダウンロード）", "16柄", "¥100"],
     url: "https://mogumogu-daisuki.booth.pm/items/8994927",
+    image: "assets/img/works/quiet-winter.webp",
   },
 ];
 
