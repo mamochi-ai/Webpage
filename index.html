@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>mamochi — Web Systems, Games &amp; LINE Stickers</title>
+  <meta name="description" content="ウェブシステム、ゲーム、LINEスタンプ。ひとりで丁寧につくっている、手のひらサイズのプロダクトたち。">
+  <meta property="og:title" content="mamochi — Small software, made with care.">
+  <meta property="og:description" content="ウェブシステム、ゲーム、LINEスタンプの作品集。">
+  <meta property="og:type" content="website">
+  <meta name="theme-color" content="#F1EEE7">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpath d='M8 46C6 30 16 16 32 16s26 14 24 30c-1 6-10 8-24 8S9 52 8 46z' fill='%23fff' stroke='%23151513' stroke-width='3'/%3E%3Ccircle cx='25' cy='36' r='2.6' fill='%23151513'/%3E%3Ccircle cx='39' cy='36' r='2.6' fill='%23151513'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&family=Zen+Maru+Gothic:wght@700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <script>
+    try { const t = localStorage.getItem("theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+  </script>
+</head>
+<body>
+  <a class="skip" href="#works">本文へスキップ</a>
+  <div class="progress" aria-hidden="true"></div>
+
+  <header class="hdr" id="top">
+    <a class="hdr__logo" href="#top" aria-label="mamochi トップへ">
+      <span class="hdr__mark" aria-hidden="true"></span>mamochi
+    </a>
+    <nav class="hdr__nav" id="nav" aria-label="メイン">
+      <a href="#works">Index</a>
+      <a href="#web">Web</a>
+      <a href="#games">Games</a>
+      <a href="#stickers">Stickers</a>
+      <a href="#about">About</a>
+      <a href="#contact" class="hdr__cta">Contact</a>
+    </nav>
+    <div class="hdr__right">
+      <span class="hdr__now mono" aria-hidden="true"><span id="now-no">00</span><span id="now-label">Intro</span></span>
+      <button class="icon-btn" id="theme" type="button" aria-label="ダーク／ライト切り替え">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor"/></svg>
+      </button>
+      <button class="icon-btn hdr__menu" id="menu" type="button" aria-label="メニュー" aria-expanded="false" aria-controls="nav">
+        <span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <!-- ============ HERO ============ -->
+    <section class="hero" data-section="00" data-label="Intro">
+      <div class="hero__meta mono">
+        <span>Selected works</span>
+        <span>2019 — 2026</span>
+        <span>Tokyo, JP <time id="clock">--:--</time></span>
+      </div>
+
+      <h1 class="hero__title">
+        <span class="line"><span style="--i:0">Small software,</span></span>
+        <span class="line"><span style="--i:1">made with <em>care.</em></span></span>
+      </h1>
+
+      <div class="hero__mochi" id="hero-mochi" role="img" aria-label="キャラクターのまもち"></div>
+
+      <div class="hero__bottom">
+        <p class="hero__lead">
+          ウェブシステム、ゲーム、LINEスタンプ。<br>
+          だれかの毎日に、ちょうどいいサイズの道具を<br class="pc">ひとりで企画して、デザインして、つくっています。
+        </p>
+        <ul class="hero__counts" id="hero-counts"></ul>
+      </div>
+    </section>
+
+    <div class="marquee" aria-hidden="true">
+      <div class="marquee__track">
+        <span>Web Systems</span><i></i><span>Games</span><i></i><span>LINE Stickers</span><i></i>
+        <span>Web Systems</span><i></i><span>Games</span><i></i><span>LINE Stickers</span><i></i>
+      </div>
+    </div>
+
+    <!-- ============ INDEX ============ -->
+    <section class="index wrap" id="works" data-section="—" data-label="Index">
+      <div class="index__head">
+        <h2 class="h-sec">Index <sup class="mono" id="index-count"></sup></h2>
+        <div class="filters" role="group" aria-label="カテゴリで絞り込み">
+          <button type="button" class="chip is-on" data-filter="all" aria-pressed="true">All</button>
+          <button type="button" class="chip" data-filter="web" aria-pressed="false"><i class="dot dot--web"></i>Web System</button>
+          <button type="button" class="chip" data-filter="game" aria-pressed="false"><i class="dot dot--game"></i>Game</button>
+          <button type="button" class="chip" data-filter="sticker" aria-pressed="false"><i class="dot dot--sticker"></i>LINE Sticker</button>
+        </div>
+      </div>
+      <div class="index__cols mono" aria-hidden="true">
+        <span>No.</span><span>Title</span><span>Category</span><span>Stack</span><span>Year</span>
+      </div>
+      <ol class="index__list" id="index-list"></ol>
+    </section>
+    <div class="peek" id="peek" aria-hidden="true"></div>
+
+    <!-- ============ WEB ============ -->
+    <section class="sec wrap" id="web" data-section="01" data-label="Web" style="--cat: var(--web)">
+      <header class="sec__head" data-reveal>
+        <span class="sec__no mono">01</span>
+        <h2 class="h-sec">Web Systems<span class="sec__ja">ウェブシステム</span></h2>
+        <p class="sec__desc">現場の「ちょっと面倒」をなくすための業務ツールや、毎日使うための生活アプリ。要件のヒアリングから運用まで担当します。</p>
+      </header>
+      <div class="web-grid" id="web-grid"></div>
+    </section>
+
+    <!-- ============ GAMES ============ -->
+    <section class="sec wrap" id="games" data-section="02" data-label="Games" style="--cat: var(--game)">
+      <header class="sec__head" data-reveal>
+        <span class="sec__no mono">02</span>
+        <h2 class="h-sec">Games<span class="sec__ja">ゲーム</span></h2>
+        <p class="sec__desc">ワンボタンで遊べるものから、じっくり考えるパズルまで。ドット絵も音も自分でつくっています。</p>
+      </header>
+
+      <div class="play" id="play" data-reveal>
+        <div class="play__bar mono">
+          <span><i class="rec"></i>Now playable — Mochi Hop</span>
+          <span class="play__keys"><kbd>Space</kbd> / <kbd>↑</kbd> / タップでジャンプ</span>
+        </div>
+        <div class="play__stage">
+          <canvas id="game" tabindex="0" aria-label="ミニゲーム Mochi Hop。スペースキーかクリックでジャンプ"></canvas>
+        </div>
+        <div class="play__foot mono">
+          <span>Score <b id="g-score">0</b></span>
+          <span>Best <b id="g-best">0</b></span>
+        </div>
+      </div>
+
+      <div class="game-list" id="game-list"></div>
+    </section>
+
+    <!-- ============ STICKERS ============ -->
+    <section class="sec wrap" id="stickers" data-section="03" data-label="Stickers" style="--cat: var(--sticker)">
+      <header class="sec__head" data-reveal>
+        <span class="sec__no mono">03</span>
+        <h2 class="h-sec">LINE Stickers<span class="sec__ja">LINEスタンプ</span></h2>
+        <p class="sec__desc">おもちのキャラクター「まもち」のスタンプ。下のスタンプを押すと、トーク画面で送ったときの見え方を試せます。</p>
+      </header>
+
+      <div class="stk" data-reveal>
+        <div class="stk__main">
+          <div class="stk__tabs" role="tablist" aria-label="スタンプセット" id="stk-tabs"></div>
+          <div class="stk__info" id="stk-info"></div>
+          <div class="stk__grid" id="stk-grid" role="tabpanel"></div>
+        </div>
+
+        <div class="phone" aria-label="トーク画面のプレビュー">
+          <div class="phone__bar">
+            <span aria-hidden="true">‹</span><b>ともだち</b><span aria-hidden="true">≡</span>
+          </div>
+          <div class="phone__chat" id="chat" aria-live="polite"></div>
+          <div class="phone__input" aria-hidden="true">
+            <span>＋</span><span class="phone__field">Aa</span><span>☺</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ ABOUT ============ -->
+    <section class="about wrap" id="about" data-section="04" data-label="About">
+      <div class="about__statement" data-reveal>
+        <span class="sec__no mono">04 — About</span>
+        <p class="about__big">
+          便利すぎなくていい。<br>
+          ちゃんと<em>手になじむ</em>ものを。
+        </p>
+        <p class="about__body">
+          業務の小さな不便をなくすシステム、すきま時間に遊べるゲーム、言葉のかわりに気持ちを届けるスタンプ。形はちがっても、使う人の手ざわりを想像しながら、企画から実装・デザインまでひとりで仕上げています。
+        </p>
+      </div>
+
+      <div class="about__side" data-reveal>
+        <dl class="tools">
+          <div><dt class="mono">Frontend</dt><dd>TypeScript, React, Next.js, Vue</dd></div>
+          <div><dt class="mono">Backend</dt><dd>Node.js, Go, Laravel, Supabase</dd></div>
+          <div><dt class="mono">Game</dt><dd>Unity, Godot, Canvas</dd></div>
+          <div><dt class="mono">Design</dt><dd>Figma, Illustrator, Procreate</dd></div>
+        </dl>
+        <ol class="process">
+          <li><span class="mono">01</span><b>聞く</b><p>困っていることを、作業の手順ごと聞かせてもらいます。</p></li>
+          <li><span class="mono">02</span><b>描く</b><p>画面を紙とFigmaで描いて、触れる試作で確かめます。</p></li>
+          <li><span class="mono">03</span><b>つくる</b><p>小さく出して、使われ方を見ながら直します。</p></li>
+          <li><span class="mono">04</span><b>育てる</b><p>公開後も、不具合対応や改善を続けます。</p></li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ============ CONTACT ============ -->
+    <section class="contact wrap" id="contact" data-section="05" data-label="Contact">
+      <span class="sec__no mono">05 — Contact</span>
+      <p class="contact__lead">お仕事のご相談、作品の感想、なんでもどうぞ。</p>
+      <a class="contact__mail" id="mail" href="mailto:hello@example.com">
+        <span id="mail-text">hello@example.com</span><span class="contact__arrow" aria-hidden="true">↗</span>
+      </a>
+      <div class="contact__row">
+        <button type="button" class="btn btn--ghost" id="copy">アドレスをコピー</button>
+        <ul class="contact__links" id="links"></ul>
+      </div>
+    </section>
+  </main>
+
+  <footer class="ftr wrap">
+    <span class="mono">© <span id="year"></span> mamochi</span>
+    <span class="mono">Designed &amp; built by hand.</span>
+    <a href="#top" class="mono">Back to top ↑</a>
+  </footer>
+
+  <!-- 作品詳細 -->
+  <dialog class="sheet" id="sheet" aria-labelledby="sheet-title">
+    <div class="sheet__inner">
+      <button class="sheet__close icon-btn" type="button" id="sheet-close" aria-label="閉じる">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="1.6"/></svg>
+      </button>
+      <div class="sheet__media" id="sheet-media"></div>
+      <div class="sheet__body" id="sheet-body"></div>
+    </div>
+  </dialog>
+
+  <div class="toast mono" id="toast" role="status"></div>
+
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/main.js"></script>
+</body>
+</html>
