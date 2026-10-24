@@ -59,6 +59,20 @@ window.WORKS = [
     url: "https://mamochi-ai.github.io/automoney/",
     image: "assets/img/works/zero-invoice.webp",
   },
+  {
+    id: "study-sakura",
+    type: "web",
+    title: "My Study",
+    titleJa: "マイ・スタディ",
+    year: 2026,
+    summary: "参考書（PDF）とノートを、机に広げるように並べて勉強。",
+    description:
+      "本棚から参考書とバインダーを選ぶと、左に参考書、右にノートが広がる勉強アプリ。PDFの範囲を切り取ってノートに貼る、引用する、ページへのリンクを入れる、が一瞬でできます。暗記シート、Apple Pencilの手書きノート、復習マーク、ポモドーロタイマー、学習記録つき。iPadのホーム画面に追加すればオフラインでも使えます。",
+    role: "企画・制作",
+    stack: ["React", "TypeScript", "pdf.js", "TipTap", "IndexedDB"],
+    url: "https://mamochi-ai.github.io/study-sakura/",
+    image: "assets/img/works/study-sakura.webp",
+  },
 
   {
     id: "mochihop",
