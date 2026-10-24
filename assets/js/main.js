@@ -209,20 +209,13 @@
     return `<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges" preserveAspectRatio="xMidYMid slice" aria-hidden="true">${px.join("")}</svg>`;
   }
 
+  const stkSrc = (setId, src) => `assets/img/stickers/${setId}/${src}.png`;
   function thumbSticker(w) {
     const set = SETS[w.set];
     if (!set) return "";
-    const bg = { daily: "#FFE9DC", keigo: "#E2E8FF", season: "#DDF3E6" }[w.set] || "#EEE";
-    const cells = set.stickers.slice(0, 4).map((s, i) => {
-      const x = (i % 2) * 180 + 30, y = Math.floor(i / 2) * 140 + 6;
-      const rot = [-6, 5, 4, -5][i];
-      return `<g transform="translate(${x} ${y}) rotate(${rot} 80 80)"><svg width="160" height="160" viewBox="0 0 200 200">${mochi({ ...s, body: s.body || set.body, accent: set.label }).replace(/^<svg[^>]*>|<\/svg>$/g, "")}</svg></g>`;
-    }).join("");
-    return `<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-      <rect width="400" height="300" fill="${bg}"/>
-      <g opacity=".5">${Array.from({ length: 12 }, (_, i) => `<circle cx="${(i % 4) * 110 + 30}" cy="${Math.floor(i / 4) * 110 + 30}" r="2" fill="#151513" opacity=".25"/>`).join("")}</g>
-      ${cells}
-    </svg>`;
+    const imgs = set.stickers.slice(0, 3).map((s, i) =>
+      `<img src="${stkSrc(w.set, s.src)}" alt="" loading="lazy" style="--r:${[-6, 4, -3][i]}deg">`).join("");
+    return `<span class="stk-thumb" style="--bg:${set.bg}"><img class="stk-thumb__cover" src="${stkSrc(w.set, set.cover)}" alt="" loading="lazy">${imgs}</span>`;
   }
 
   const thumb = (w) => w.image
@@ -450,11 +443,11 @@
     $("#stk-info").innerHTML = `
       <h3>${esc(w.title)}</h3>
       <p>${esc(w.summary)}</p>
-      <span class="mono">${esc(w.stack[0])} — ${w.year}</span>
+      <span class="mono">${esc(w.stack.join(" / "))} — ${w.year}</span>
       <a class="btn btn--line" href="${esc(w.url)}" target="_blank" rel="noopener">LINE STOREで見る ↗</a>`;
     const grid = $("#stk-grid");
     grid.innerHTML = set.stickers.map((s, i) =>
-      `<button type="button" class="stk__item" style="--i:${i}" data-stk="${i}" aria-label="スタンプ「${esc(s.label)}」を送る">${mochi({ ...s, body: s.body || set.body, accent: set.label })}</button>`).join("");
+      `<button type="button" class="stk__item" style="--i:${i}" data-stk="${i}" aria-label="スタンプ「${esc(s.label)}」を送る"><img src="${stkSrc(id, s.src)}" alt="" loading="lazy"></button>`).join("");
     grid.classList.remove("is-swap"); void grid.offsetWidth; grid.classList.add("is-swap");
   }
   $("#stk-tabs").addEventListener("click", (e) => { const b = e.target.closest("[data-set]"); if (b) selectSet(b.dataset.set); });
@@ -472,12 +465,12 @@
     const set = SETS[activeSet];
     const s = set.stickers[+b.dataset.stk];
     b.classList.remove("is-sent"); void b.offsetWidth; b.classList.add("is-sent");
-    addMsg(`<span class="msg__stk" role="img" aria-label="${esc(s.label)}">${mochi({ ...s, body: s.body || set.body, accent: set.label })}</span>`, true);
+    addMsg(`<img class="msg__stk" src="${stkSrc(activeSet, s.src)}" alt="${esc(s.label)}">`, true);
     clearTimeout(replyTimer);
     replyTimer = setTimeout(() => {
       const others = set.stickers.filter((x) => x !== s);
       const rep = others[Math.floor(Math.random() * others.length)];
-      addMsg(`<span class="msg__stk" role="img" aria-label="${esc(rep.label)}">${mochi({ ...rep, body: rep.body || set.body, accent: set.label })}</span>`, false);
+      addMsg(`<img class="msg__stk" src="${stkSrc(activeSet, rep.src)}" alt="${esc(rep.label)}">`, false);
     }, 1100);
   });
   if (activeSet) selectSet(activeSet);
