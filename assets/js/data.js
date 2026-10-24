@@ -6,7 +6,7 @@ window.SITE = {
   name: "mamochi",
   email: "miseru.techo@gmail.com",
   // アクセスランキング用 Worker の URL（stats-worker/SETUP.md）。空のときはランキングを表示しない
-  statsApi: "",
+  statsApi: "https://mamochi-stats.piyopiyo-yellowbird.workers.dev",
   links: [
     { label: "GitHub", url: "https://github.com/mamochi-ai" },
     { label: "LINE STORE", url: "https://store.line.me/stickershop/author/6676247/ja" },
