@@ -31,73 +31,6 @@
   }
 
   /* =======================================================
-     Art: mochi character
-     ======================================================= */
-  const INK = "#151513";
-  const BODY_PATH = "M30 150C22 108 52 60 100 60s78 48 70 90c-4 18-30 22-70 22s-66-4-70-22z";
-
-  function eyesSvg(type) {
-    const dot = (x) => `<circle cx="${x}" cy="116" r="6.2" fill="${INK}"/><circle cx="${x - 2}" cy="114" r="1.9" fill="#fff"/>`;
-    const arc = (x, up = true) => `<path d="M${x - 8} ${up ? 119 : 115}Q${x} ${up ? 108 : 124} ${x + 8} ${up ? 119 : 115}" stroke="${INK}" stroke-width="4.5" fill="none" stroke-linecap="round"/>`;
-    switch (type) {
-      case "happy": return arc(78) + arc(122);
-      case "sleepy": return arc(78, false) + arc(122, false);
-      case "sparkle": return [78, 122].map((x) => `<circle cx="${x}" cy="115" r="8.5" fill="${INK}"/><circle cx="${x - 3}" cy="112" r="3.2" fill="#fff"/><circle cx="${x + 3}" cy="119" r="1.5" fill="#fff"/>`).join("");
-      case "wink": return dot(78) + arc(122);
-      case "cross": return `<path d="M71 109l14 7-14 7M129 109l-14 7 14 7" stroke="${INK}" stroke-width="4.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`;
-      case "tear": return dot(78) + dot(122) + `<path d="M74 126c0 0-5 7-5 10a5 5 0 0 0 10 0c0-3-5-10-5-10z" fill="#8EC8FF" stroke="${INK}" stroke-width="2"/>`;
-      default: return dot(78) + dot(122);
-    }
-  }
-  function mouthSvg(type) {
-    const s = `stroke="${INK}" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"`;
-    switch (type) {
-      case "open": return `<path d="M90 130q10 20 20 0z" fill="${INK}" stroke="${INK}" stroke-width="3" stroke-linejoin="round"/><path d="M95 139q5 5 10 0q-5-3-10 0z" fill="#FF7A7A"/>`;
-      case "flat": return `<path d="M94 134h12" ${s}/>`;
-      case "o": return `<circle cx="100" cy="135" r="4.5" ${s}/>`;
-      case "wavy": return `<path d="M88 136q4-5 8 0t8 0t8 0" ${s}/>`;
-      case "cat": return `<path d="M89 131q5.5 7 11 0q5.5 7 11 0" ${s}/>`;
-      default: return `<path d="M92 131q8 9 16 0" ${s}/>`;
-    }
-  }
-  function extraSvg(type, accent) {
-    switch (type) {
-      case "heart": return `<path transform="translate(150 54) rotate(14)" d="M0 6C0-1 9-2 10 5c1-7 10-6 10 1 0 7-10 12-10 15C10 18 0 13 0 6z" fill="${accent}" stroke="${INK}" stroke-width="2.5" stroke-linejoin="round"/>`;
-      case "sweat": return `<path d="M156 78c0 0-8 11-8 15a8 8 0 0 0 16 0c0-4-8-15-8-15z" fill="#8EC8FF" stroke="${INK}" stroke-width="2.5"/>`;
-      case "bang": return `<g stroke="${INK}" stroke-width="4.5" stroke-linecap="round"><path d="M158 52l-4 22M170 60l-9 17M146 50l1 20"/></g>`;
-      case "zzz": return `<text x="146" y="74" font-family="JetBrains Mono, monospace" font-weight="700" font-size="22" fill="${INK}">z<tspan dy="-12" font-size="16">z</tspan></text>`;
-      case "sparkle": return `<g fill="${accent}" stroke="${INK}" stroke-width="2" stroke-linejoin="round"><path d="M156 52l4 10 10 4-10 4-4 10-4-10-10-4 10-4z"/><path d="M40 72l2.5 6 6 2.5-6 2.5-2.5 6-2.5-6-6-2.5 6-2.5z"/></g>`;
-      case "anger": return `<path d="M150 72q6 0 6-6M162 66q0 6 6 6M168 84q-6 0-6 6M156 90q0-6-6-6" stroke="#FF4B4B" stroke-width="4" fill="none" stroke-linecap="round"/>`;
-      default: return "";
-    }
-  }
-  function mochi(o = {}) {
-    const body = o.body || "#FFFFFF";
-    const accent = o.accent || "#FF5A1F";
-    const label = o.label
-      ? `<text x="100" y="40" text-anchor="middle" font-family="'Zen Maru Gothic', sans-serif" font-weight="900" font-size="${o.label.length > 5 ? 23 : 29}" fill="${accent}" stroke="#fff" stroke-width="9" paint-order="stroke" stroke-linejoin="round">${esc(o.label)}</text>`
-      : "";
-    const eyes = o.track
-      ? `<g class="m-eyes"><g class="m-blink">${eyesSvg(o.eyes)}</g></g>`
-      : eyesSvg(o.eyes);
-    return `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-      <ellipse cx="100" cy="178" rx="62" ry="7" fill="${INK}" opacity=".12"/>
-      <g class="m-all">
-        <g class="m-body">
-          <path d="${BODY_PATH}" fill="#fff" stroke="#fff" stroke-width="${o.cut === false ? 0 : 14}" stroke-linejoin="round"/>
-          <path d="${BODY_PATH}" fill="${body}" stroke="${INK}" stroke-width="4" stroke-linejoin="round"/>
-          <path d="M52 112c4-22 22-38 42-40" stroke="#fff" stroke-width="6" fill="none" stroke-linecap="round" opacity=".9"/>
-        </g>
-        ${o.cheeks === false ? "" : `<ellipse cx="60" cy="133" rx="10" ry="5.5" fill="#FF8F8F" opacity=".55"/><ellipse cx="140" cy="133" rx="10" ry="5.5" fill="#FF8F8F" opacity=".55"/>`}
-        ${eyes}
-        ${mouthSvg(o.mouth)}
-        ${extraSvg(o.extra, accent)}
-      </g>
-      ${label}
-    </svg>`;
-  }
-
-  /* =======================================================
      Art: thumbnails (generated, so no images are required)
      ======================================================= */
   function thumbWeb(t) {
@@ -230,7 +163,8 @@
   const byType = (t) => WORKS.filter((w) => w.type === t);
 
   // hero
-  $("#hero-mochi").innerHTML = mochi({ eyes: "dot", mouth: "smile", track: true, cut: false, accent: "#FF5A1F" });
+  const CHARA = (pose) => `assets/img/chara/${pose}.png`;
+  $("#hero-mochi").innerHTML = `<img class="hero__chara" src="${CHARA("big")}" alt="" width="672" height="493"><img class="hero__chara hero__chara--flat" src="${CHARA("flat")}" alt="" width="484" height="192">`;
   $("#hero-counts").innerHTML = [["web", "#web"], ["game", "#games"], ["sticker", "#stickers"]].map(([t, href]) =>
     `<li><a href="${href}" style="--c:${CAT[t].color}"><b>${pad(byType(t).length)}</b><span>${CAT[t].label}${t === "sticker" ? " sets" : "s"}</span><small>${CAT[t].ja}</small></a></li>`).join("");
 
@@ -321,23 +255,27 @@
   $$("[data-reveal]").forEach((el) => revObs.observe(el));
 
   /* =======================================================
-     Hero mochi: eyes follow pointer, squish on click
+     Hero character: leans toward the pointer, flattens on click
      ======================================================= */
   const heroM = $("#hero-mochi");
-  const eyes = $(".m-eyes", heroM);
-  let eyeRaf = 0;
+  let leanRaf = 0;
   addEventListener("pointermove", (e) => {
-    if (eyeRaf) return;
-    eyeRaf = requestAnimationFrame(() => {
-      eyeRaf = 0;
+    if (leanRaf) return;
+    leanRaf = requestAnimationFrame(() => {
+      leanRaf = 0;
       const b = heroM.getBoundingClientRect();
-      const dx = e.clientX - (b.left + b.width / 2), dy = e.clientY - (b.top + b.height * .58);
-      const d = Math.hypot(dx, dy) || 1, k = Math.min(1, d / 400);
-      eyes.setAttribute("transform", `translate(${(dx / d) * 7 * k} ${(dy / d) * 5 * k})`);
+      const dx = e.clientX - (b.left + b.width / 2);
+      const k = Math.max(-1, Math.min(1, dx / 600));
+      heroM.style.setProperty("--lean", `${k * 5}deg`);
     });
   }, { passive: true });
+  let flatT = 0;
   heroM.addEventListener("click", () => {
-    heroM.classList.remove("is-boing"); void heroM.offsetWidth; heroM.classList.add("is-boing");
+    heroM.classList.add("is-flat");
+    clearTimeout(flatT);
+    flatT = setTimeout(() => {
+      heroM.classList.remove("is-flat", "is-boing"); void heroM.offsetWidth; heroM.classList.add("is-boing");
+    }, 650);
   });
 
   /* =======================================================
@@ -421,7 +359,7 @@
   const chat = $("#chat");
   let activeSet = stickerWorks[0] && stickerWorks[0].set;
   const nowTime = () => { const d = new Date(); return `${d.getHours()}:${pad(d.getMinutes())}`; };
-  const avatar = `<span class="msg__av">${mochi({ eyes: "dot", mouth: "smile", cut: false, cheeks: true })}</span>`;
+  const avatar = `<span class="msg__av"><img src="${CHARA("icon")}" alt=""></span>`;
   function addMsg(html, me) {
     const el = document.createElement("div");
     el.className = `msg${me ? " msg--me" : ""}`;
@@ -494,7 +432,8 @@
   const game = (() => {
     const cv = $("#game");
     const ctx = cv.getContext("2d");
-    const body = new Path2D(BODY_PATH);
+    const sprite = {};
+    ["sit", "hop", "flat"].forEach((k) => { const im = new Image(); im.onload = () => draw(); im.src = CHARA(k); sprite[k] = im; });
     let W = 0, H = 0, dpr = 1, ground = 0, unit = 1;
     let col = {};
     let state = "idle", raf = 0, last = 0, visible = false;
@@ -529,21 +468,13 @@
       if (p.onGround) { p.vy = -15.5 * unit; p.onGround = false; p.squash = .75; }
     }
     function drawMochi(x, y, s, sq, dead) {
+      const im = dead ? sprite.flat : p.onGround ? sprite.sit : sprite.hop;
+      if (!im.complete || !im.naturalWidth) return;
+      const w = s * 1.3, h = w * (im.naturalHeight / im.naturalWidth);
       ctx.save();
-      ctx.translate(x, y);
-      ctx.scale((s / 140) * (2 - sq), (s / 140) * sq);
-      ctx.translate(-100, -172);
-      ctx.fillStyle = "#fff"; ctx.strokeStyle = "#151513"; ctx.lineWidth = 6; ctx.lineJoin = "round";
-      ctx.fill(body); ctx.stroke(body);
-      ctx.fillStyle = "#151513";
-      if (dead) {
-        ctx.lineWidth = 6; ctx.lineCap = "round";
-        [[78], [122]].forEach(([ex]) => { ctx.beginPath(); ctx.moveTo(ex - 7, 109); ctx.lineTo(ex + 7, 123); ctx.moveTo(ex + 7, 109); ctx.lineTo(ex - 7, 123); ctx.stroke(); });
-      } else {
-        [78, 122].forEach((ex) => { ctx.beginPath(); ctx.arc(ex + 4, 116, 7, 0, 7); ctx.fill(); });
-      }
-      ctx.fillStyle = "rgba(255,143,143,.6)";
-      [60, 140].forEach((cx) => { ctx.beginPath(); ctx.ellipse(cx + 4, 133, 10, 5.5, 0, 0, 7); ctx.fill(); });
+      ctx.translate(x, y + 2 * unit);
+      ctx.scale(dead ? 1 : 2 - sq, dead ? 1 : sq);
+      ctx.drawImage(im, -w / 2, -h, w, h);
       ctx.restore();
     }
     function drawDango(o) {

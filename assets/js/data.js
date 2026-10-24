@@ -96,7 +96,7 @@ window.WORKS = [
       "小さなトラックに、冷蔵庫も棚も段ボールもボウリング球も全部積む。ベルト3本で固定したら、アクセルとブレーキだけで段差と坂と、なぜか巨大な磁石を越えて届けます。荷物は物理演算で本当に揺れて、落ちます。積み方はそのままに、運転だけ何度でもやり直せます。全3ステージ。",
     role: "企画・制作",
     stack: ["Canvas", "Planck.js（物理演算）", "JavaScript"],
-    url: "https://claude.ai/artifact/77UAUKUHgRoi4rRXK4sThc",
+    url: "https://mamochi-ai.github.io/game-track/",
     image: "assets/img/works/ippin.webp",
   },
   {
