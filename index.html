@@ -15,7 +15,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&family=Zen+Maru+Gothic:wght@700;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/style.css?v=20261024f">
+  <link rel="stylesheet" href="assets/css/style.css?v=20261024g">
   <script>
     try { const t = localStorage.getItem("theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
   </script>
@@ -33,6 +33,7 @@
       <a href="#web">Web</a>
       <a href="#games">Games</a>
       <a href="#stickers">Stickers</a>
+      <a href="#booth">Booth</a>
       <a href="#about">About</a>
       <a href="#contact" class="hdr__cta">Contact</a>
     </nav>
@@ -65,7 +66,7 @@
 
       <div class="hero__bottom">
         <p class="hero__lead">
-          ウェブシステム、ゲーム、LINEスタンプ。<br>
+          ウェブシステム、ゲーム、LINEスタンプ、塗り絵。<br>
           だれかの毎日に、ちょうどいいサイズの道具を<br class="pc">ひとりで企画して、デザインして、つくっています。
         </p>
         <ul class="hero__counts" id="hero-counts"></ul>
@@ -107,6 +108,7 @@
           <button type="button" class="chip" data-filter="web" aria-pressed="false"><i class="dot dot--web"></i>Web System</button>
           <button type="button" class="chip" data-filter="game" aria-pressed="false"><i class="dot dot--game"></i>Game</button>
           <button type="button" class="chip" data-filter="sticker" aria-pressed="false"><i class="dot dot--sticker"></i>LINE Sticker</button>
+          <button type="button" class="chip" data-filter="booth" aria-pressed="false"><i class="dot dot--booth"></i>BOOTH</button>
         </div>
       </div>
       <div class="index__cols mono" aria-hidden="true">
@@ -178,10 +180,21 @@
       </div>
     </section>
 
+    <!-- ============ BOOTH ============ -->
+    <section class="sec wrap" id="booth" data-section="04" data-label="Booth" style="--cat: var(--booth)">
+      <header class="sec__head" data-reveal>
+        <span class="sec__no mono">04</span>
+        <h2 class="h-sec">BOOTH<span class="sec__ja">ダウンロード販売</span></h2>
+        <p class="sec__desc">印刷して楽しめる、大人向けの塗り絵などをBOOTHで販売しています。</p>
+      </header>
+      <div class="game-list" id="booth-list"></div>
+      <p class="booth__shop"><a class="btn btn--ghost" href="https://mogumogu-daisuki.booth.pm/" target="_blank" rel="noopener">BOOTHのショップを見る ↗</a></p>
+    </section>
+
     <!-- ============ ABOUT ============ -->
-    <section class="about wrap" id="about" data-section="04" data-label="About">
+    <section class="about wrap" id="about" data-section="05" data-label="About">
       <div class="about__statement" data-reveal>
-        <span class="sec__no mono">04 — About</span>
+        <span class="sec__no mono">05 — About</span>
         <p class="about__big">
           便利すぎなくていい。<br>
           ちゃんと<em>手になじむ</em>ものを。
@@ -208,8 +221,8 @@
     </section>
 
     <!-- ============ CONTACT ============ -->
-    <section class="contact wrap" id="contact" data-section="05" data-label="Contact">
-      <span class="sec__no mono">05 — Contact</span>
+    <section class="contact wrap" id="contact" data-section="06" data-label="Contact">
+      <span class="sec__no mono">06 — Contact</span>
       <p class="contact__lead">作品についてご質問などあれば、こちらからどうぞ。</p>
       <a class="contact__mail" id="mail" href="mailto:miseru.techo@gmail.com">
         <span id="mail-text">miseru.techo@gmail.com</span><span class="contact__arrow" aria-hidden="true">↗</span>
@@ -240,7 +253,7 @@
 
   <div class="toast mono" id="toast" role="status"></div>
 
-  <script src="assets/js/data.js?v=20261024f"></script>
-  <script src="assets/js/main.js?v=20261024f"></script>
+  <script src="assets/js/data.js?v=20261024g"></script>
+  <script src="assets/js/main.js?v=20261024g"></script>
 </body>
 </html>

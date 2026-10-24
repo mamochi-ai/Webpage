@@ -15,6 +15,7 @@
   --web: #2B4BFF;
   --game: #FF5A1F;
   --sticker: #06C755;
+  --booth: #FC4D50;
   --cat: var(--ink);
 
   --sans: "Inter Tight", "Zen Kaku Gothic New", system-ui, sans-serif;
@@ -211,7 +212,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   .hero { min-height: auto; padding-bottom: 40px; grid-template-rows: auto; }
   .hero__mochi { position: relative; right: auto; top: auto; justify-self: end; width: min(48vw, 220px); }
   .hero__bottom { grid-template-columns: 1fr; }
-  .hero__counts { display: grid; grid-template-columns: repeat(3, 1fr); }
+  .hero__counts { display: grid; grid-template-columns: repeat(2, 1fr); }
   .hero__counts a { min-width: 0; grid-template-columns: 1fr; padding: 12px; }
   .hero__counts b { font-size: 28px; }
   .hero__counts span { font-size: 12px; }
@@ -247,7 +248,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .tags li { font-family: var(--mono); font-size: 11px; padding: 3px 9px; border-radius: 999px; border: 1px solid var(--line-2); color: var(--ink-2); }
 
 .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--ink); flex: none; }
-.dot--web { background: var(--web); } .dot--game { background: var(--game); } .dot--sticker { background: var(--sticker); }
+.dot--web { background: var(--web); } .dot--game { background: var(--game); } .dot--sticker { background: var(--sticker); } .dot--booth { background: var(--booth); }
 
 .btn {
   display: inline-flex; align-items: center; gap: 10px; height: 46px; padding: 0 22px;
@@ -418,6 +419,8 @@ kbd { font-family: var(--mono); font-size: 11px; border: 1px solid var(--line-2)
 .stk-thumb img:nth-child(2) { right: 8%; top: 6%; }
 .stk-thumb img:nth-child(3) { right: 26%; bottom: 4%; }
 .stk-thumb img:nth-child(4) { right: 2%; bottom: 22%; }
+
+.booth__shop { margin: 24px 0 0; }
 
 /* ---------- stickers ---------- */
 .stk { display: grid; grid-template-columns: minmax(0, 1fr) clamp(280px, 28vw, 340px); gap: clamp(24px, 4vw, 64px); align-items: start; }

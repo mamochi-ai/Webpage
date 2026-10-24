@@ -18,6 +18,7 @@
     web: { label: "Web System", ja: "ウェブシステム", color: "var(--web)" },
     game: { label: "Game", ja: "ゲーム", color: "var(--game)" },
     sticker: { label: "LINE Sticker", ja: "LINEスタンプ", color: "var(--sticker)" },
+    booth: { label: "BOOTH", ja: "BOOTH", color: "var(--booth)" },
   };
 
   function rng(seed) {
@@ -151,10 +152,32 @@
     return `<span class="stk-thumb" style="--bg:${set.bg}"><img class="stk-thumb__cover" src="${stkSrc(w.set, set.cover)}" alt="" loading="lazy">${imgs}</span>`;
   }
 
+  /* 塗り絵の紙を重ねた絵（BOOTH の商品画像が用意できるまでの代わり） */
+  function thumbBooth(w) {
+    const flower = (cx, cy, r) => Array.from({ length: 5 }, (_, i) => {
+      const a = (i / 5) * Math.PI * 2 - Math.PI / 2;
+      return `<ellipse cx="${cx + Math.cos(a) * r * .62}" cy="${cy + Math.sin(a) * r * .62}" rx="${r * .5}" ry="${r * .42}" transform="rotate(${(a * 180) / Math.PI + 90} ${cx + Math.cos(a) * r * .62} ${cy + Math.sin(a) * r * .62})"/>`;
+    }).join("") + `<circle cx="${cx}" cy="${cy}" r="${r * .22}"/>`;
+    const page = (x, y, rot, title, fill) => `<g transform="translate(${x} ${y}) rotate(${rot})">
+      <rect x="-70" y="-98" width="140" height="196" rx="3" fill="#fff" stroke="#151513" stroke-opacity=".12"/>
+      <g fill="${fill || "none"}" stroke="#151513" stroke-width="1.6" stroke-linejoin="round">
+        ${flower(-12, -18, 30)}${flower(30, 20, 20)}
+        <path d="M-50 70q30-40 60-30t50-20" fill="none"/>
+        <ellipse cx="-30" cy="40" rx="18" ry="8" transform="rotate(-30 -30 40)" fill="${fill ? "#7DA36B" : "none"}"/>
+      </g>
+      <text x="0" y="-70" text-anchor="middle" font-family="'Zen Maru Gothic', sans-serif" font-weight="900" font-size="20" fill="${fill ? "#C8323C" : "#fff"}" stroke="#151513" stroke-width="1.2" paint-order="stroke">${title}</text>
+    </g>`;
+    return `<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <rect width="400" height="300" fill="#EDE4D6"/>
+      ${page(110, 160, -8, "梅の花")}${page(290, 150, 7, "水仙")}${page(200, 156, -1, "寒椿", "#E9545D")}
+    </svg>`;
+  }
+
   const thumb = (w) => w.image
     ? `<img src="${esc(w.image)}" alt="" loading="lazy" style="width:100%;height:100%;object-fit:cover;object-position:top left">`
     : w.type === "web" ? thumbWeb({ ...w.thumb, title: w.title })
     : w.type === "game" ? thumbGame(w.thumb)
+    : w.type === "booth" ? thumbBooth(w)
     : thumbSticker(w);
 
   /* =======================================================
@@ -165,8 +188,8 @@
   // hero
   const CHARA = (pose) => `assets/img/chara/${pose}.png`;
   $("#hero-mochi").innerHTML = `<img class="hero__chara" src="${CHARA("big")}" alt="" width="672" height="493"><img class="hero__chara hero__chara--flat" src="${CHARA("flat")}" alt="" width="484" height="192">`;
-  $("#hero-counts").innerHTML = [["web", "#web"], ["game", "#games"], ["sticker", "#stickers"]].map(([t, href]) =>
-    `<li><a href="${href}" style="--c:${CAT[t].color}"><b>${pad(byType(t).length)}</b><span>${CAT[t].label}${t === "sticker" ? " sets" : "s"}</span><small>${CAT[t].ja}</small></a></li>`).join("");
+  $("#hero-counts").innerHTML = [["web", "#web"], ["game", "#games"], ["sticker", "#stickers"], ["booth", "#booth"]].map(([t, href]) =>
+    `<li><a href="${href}" style="--c:${CAT[t].color}"><b>${pad(byType(t).length)}</b><span>${CAT[t].label}${t === "sticker" ? " sets" : t === "booth" ? " items" : "s"}</span><small>${CAT[t].ja}</small></a></li>`).join("");
 
   // index
   $("#index-count").textContent = `(${pad(WORKS.length)})`;
@@ -195,6 +218,7 @@
     </button>`;
   $("#web-grid").innerHTML = byType("web").map(cardHtml).join("");
   $("#game-list").innerHTML = byType("game").filter((w) => !w.playable).map(cardHtml).join("");
+  $("#booth-list").innerHTML = byType("booth").map(cardHtml).join("");
 
   // contact
   if (SITE.email) {
@@ -396,12 +420,12 @@
       <p>${esc(w.description)}</p>
       <dl>
         <div><dt class="mono">Role</dt><dd>${esc(w.role)}</dd></div>
-        <div><dt class="mono">${w.type === "sticker" ? "Info" : "Stack"}</dt><dd>${esc(w.stack.join(" / "))}</dd></div>
+        <div><dt class="mono">${w.type === "sticker" || w.type === "booth" ? "Info" : "Stack"}</dt><dd>${esc(w.stack.join(" / "))}</dd></div>
       </dl>
       <div class="sheet__actions">
         ${w.type === "sticker"
           ? `<a class="btn btn--line" href="${esc(w.url)}" target="_blank" rel="noopener">LINE STOREで見る ↗</a><button type="button" class="btn btn--ghost" data-goto-set="${esc(w.set)}">トークで試す</button>`
-          : `<a class="btn" href="${esc(w.url)}" data-track-open="${esc(w.id)}" ${isExternal ? 'target="_blank" rel="noopener"' : ""}>${w.type === "game" ? "遊んでみる" : "サイトを見る"} ↗</a>`}
+          : `<a class="btn" href="${esc(w.url)}" data-track-open="${esc(w.id)}" ${isExternal ? 'target="_blank" rel="noopener"' : ""}>${w.type === "game" ? "遊んでみる" : w.type === "booth" ? "BOOTHで見る" : "サイトを見る"} ↗</a>`}
       </div>`;
     sheet.style.setProperty("--cat", CAT[w.type].color);
     sheet.showModal();

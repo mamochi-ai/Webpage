@@ -10,6 +10,7 @@ window.SITE = {
   links: [
     { label: "GitHub", url: "https://github.com/mamochi-ai" },
     { label: "LINE STORE", url: "https://store.line.me/stickershop/author/6676247/ja" },
+    { label: "BOOTH", url: "https://mogumogu-daisuki.booth.pm/" },
   ],
 };
 
@@ -154,6 +155,20 @@ window.WORKS = [
     stack: ["24個", "スタンプアレンジ対応"],
     url: "https://line.me/S/sticker/37345788",
     set: "honne",
+  },
+
+  {
+    id: "quiet-winter",
+    type: "booth",
+    title: "Quiet Winter in Japan",
+    titleJa: "日本の冬と花の塗り絵16柄",
+    year: 2026,
+    summary: "椿や雪うさぎ、正月飾り。文字の中まで塗れる、大人向けの塗り絵。",
+    description:
+      "寒椿と和傘、南天と雪うさぎ、柚子や福寿草、正月飾りなど、日本の冬の草花と和小物を描いた16柄のセット。全ページに日本語の題名を袋文字で添えていて、絵と一緒に文字の中も塗れます。A4とUSレターのPDF、高解像度のPNG、完成見本3枚つき。日本語と英語の説明があり、海外の方にも楽しんでもらえます。",
+    role: "企画・制作",
+    stack: ["PDF・PNG（ダウンロード）", "16柄", "¥100"],
+    url: "https://mogumogu-daisuki.booth.pm/items/8994927",
   },
 ];
 
