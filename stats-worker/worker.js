@@ -6,6 +6,12 @@
                   同じ人・同じ作品・同じ種類は 1 日 1 回だけ数える
    GET  /ranking?days=30   直近 30 日（days=all で累計）の回数
 
+   おまけゲーム Mochi Hop のスコア
+   POST /run      ゲーム開始の合図。署名つきの整理券（token）を返す
+   POST /score    { token, name, score } 整理券 1 枚につき 1 回だけ登録できる
+                  開始からの経過時間でありえない点数（1 秒あたり約 60 点が上限）は受け付けない
+   GET  /scores?period=week   今週（直近 7 日）の上位 10（period=all で全期間）
+
    保存するのは「日付・作品・種類・回数」だけ。IP アドレスや端末の情報は保存しない
    （1 日 1 回の判定には、IP などを推測できない形に変換した値を使い、2 日で消す）。
    D1 のバインド名は DB。表は最初のアクセスで自動で作る。
@@ -23,7 +29,12 @@ const SCHEMA = [
   "CREATE TABLE IF NOT EXISTS hits (day TEXT NOT NULL, id TEXT NOT NULL, kind TEXT NOT NULL, n INTEGER NOT NULL DEFAULT 0, PRIMARY KEY (day, id, kind))",
   "CREATE TABLE IF NOT EXISTS seen (day TEXT NOT NULL, k TEXT NOT NULL, PRIMARY KEY (day, k))",
   "CREATE TABLE IF NOT EXISTS meta (key TEXT PRIMARY KEY, value TEXT NOT NULL)",
+  "CREATE TABLE IF NOT EXISTS scores (id INTEGER PRIMARY KEY AUTOINCREMENT, game TEXT NOT NULL, name TEXT NOT NULL, score INTEGER NOT NULL, day TEXT NOT NULL, run TEXT NOT NULL UNIQUE)",
+  "CREATE INDEX IF NOT EXISTS scores_rank ON scores (game, score DESC)",
 ];
+const GAMES = new Set(["mochihop"]);
+const POINTS_PER_SEC = 60;
+const NAME_MAX = 12;
 let ready = null;
 
 function setup(db) {
@@ -48,6 +59,21 @@ async function salt(db) {
 async function sha256(text) {
   const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text));
   return [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+
+async function hmac(db, text) {
+  const key = await crypto.subtle.importKey("raw", new TextEncoder().encode(await salt(db)), { name: "HMAC", hash: "SHA-256" }, false, ["sign"]);
+  const sig = await crypto.subtle.sign("HMAC", key, new TextEncoder().encode(text));
+  return [...new Uint8Array(sig)].map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+
+function cleanName(raw) {
+  const name = String(raw || "")
+    .normalize("NFKC")
+    .replace(/[\u0000-\u001f\u007f-\u009f\u200b-\u200f\u2028-\u202e\u2066-\u2069<>]/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+  return [...name].slice(0, NAME_MAX).join("") || "ななしのビーバー";
 }
 
 function cors(origin) {
@@ -89,6 +115,62 @@ async function hit(request, env, headers) {
   return new Response(null, { status: 204, headers });
 }
 
+async function readBody(request) {
+  try { return JSON.parse(await request.text()); } catch { return null; }
+}
+
+/** ゲーム開始：整理券 = 開始時刻.乱数.署名 */
+async function runStart(request, env, headers) {
+  if (!ALLOWED_ORIGINS.includes(request.headers.get("Origin") || "")) return json({ error: "origin" }, 403, headers);
+  const body = await readBody(request);
+  const game = String(body?.game || "");
+  if (!GAMES.has(game)) return json({ error: "input" }, 400, headers);
+  const nonce = [...crypto.getRandomValues(new Uint8Array(9))].map((b) => b.toString(16).padStart(2, "0")).join("");
+  const head = `${game}.${Date.now()}.${nonce}`;
+  return json({ token: `${head}.${await hmac(env.DB, head)}` }, 200, headers);
+}
+
+async function scoreSubmit(request, env, headers) {
+  if (!ALLOWED_ORIGINS.includes(request.headers.get("Origin") || "")) return json({ error: "origin" }, 403, headers);
+  const body = await readBody(request);
+  const parts = String(body?.token || "").split(".");
+  if (parts.length !== 4) return json({ error: "token" }, 400, headers);
+  const [game, startedAt, nonce, sig] = parts;
+  const head = `${game}.${startedAt}.${nonce}`;
+  if (!GAMES.has(game) || sig !== (await hmac(env.DB, head))) return json({ error: "token" }, 400, headers);
+
+  const elapsed = (Date.now() - Number(startedAt)) / 1000;
+  const score = Number(body?.score);
+  if (!Number.isInteger(score) || score < 1) return json({ error: "score" }, 400, headers);
+  if (elapsed > 3600) return json({ error: "expired" }, 400, headers);
+  if (score > elapsed * POINTS_PER_SEC * 1.05 + 30) return json({ error: "score" }, 400, headers);
+
+  const name = cleanName(body?.name);
+  const run = await sha256(head);
+  const res = await env.DB
+    .prepare("INSERT OR IGNORE INTO scores (game, name, score, day, run) VALUES (?, ?, ?, ?, ?)")
+    .bind(game, name, score, jstDay(), run)
+    .run();
+  if (res.meta.changes !== 1) return json({ error: "used" }, 409, headers);
+  const rank = await env.DB
+    .prepare("SELECT COUNT(*) + 1 AS rank FROM scores WHERE game = ? AND score > ?")
+    .bind(game, score)
+    .first();
+  return json({ ok: true, name, score, rank: rank.rank }, 200, headers);
+}
+
+async function scoreList(url, env, headers) {
+  const game = url.searchParams.get("game") || "mochihop";
+  if (!GAMES.has(game)) return json({ error: "input" }, 400, headers);
+  const period = url.searchParams.get("period") === "all" ? "all" : "week";
+  const from = period === "all" ? "0000-00-00" : jstDay(-6);
+  const { results } = await env.DB
+    .prepare("SELECT name, MAX(score) AS score, MIN(day) AS day FROM scores WHERE game = ? AND day >= ? GROUP BY name ORDER BY score DESC LIMIT 10")
+    .bind(game, from)
+    .all();
+  return json({ game, period, items: results }, 200, { ...headers, "Cache-Control": "public, max-age=30" });
+}
+
 async function ranking(url, env, headers) {
   const days = url.searchParams.get("days") === "all" ? "all" : 30;
   const from = days === "all" ? "0000-00-00" : jstDay(-(days - 1));
@@ -119,6 +201,9 @@ export default {
       await setup(env.DB);
       if (request.method === "POST" && url.pathname === "/hit") return await hit(request, env, headers);
       if (request.method === "GET" && url.pathname === "/ranking") return await ranking(url, env, headers);
+      if (request.method === "POST" && url.pathname === "/run") return await runStart(request, env, headers);
+      if (request.method === "POST" && url.pathname === "/score") return await scoreSubmit(request, env, headers);
+      if (request.method === "GET" && url.pathname === "/scores") return await scoreList(url, env, headers);
       if (request.method === "GET" && url.pathname === "/") return json({ ok: true, service: "mamochi-stats" }, 200, headers);
       return json({ error: "not found" }, 404, headers);
     } catch (e) {

@@ -423,6 +423,29 @@ kbd { font-family: var(--mono); font-size: 11px; border: 1px solid var(--line-2)
 #game { width: 100%; height: clamp(220px, 34vw, 400px); cursor: pointer; touch-action: manipulation; outline: none; }
 #game:focus-visible { box-shadow: inset 0 0 0 2px var(--game); }
 
+.hop-submit { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 12px; padding: 16px; border-top: 1px solid var(--line-2); background: color-mix(in srgb, var(--game) 8%, var(--card)); }
+.hop-submit[hidden] { display: none; }
+.hop-submit__lead { margin: 0; flex: 1 1 100%; font-family: var(--jp); font-weight: 700; }
+.hop-submit__lead b { color: var(--game); font-size: 1.2em; }
+.hop-submit input { flex: 1 1 200px; min-width: 0; height: 46px; padding: 0 16px; border-radius: 999px; border: 1px solid var(--line-2); background: var(--paper); color: var(--ink); font: 16px var(--jp); }
+.hop-submit input:focus { outline: 2px solid var(--game); outline-offset: 1px; }
+.hop-submit__msg { margin: 0; flex: 1 1 100%; font-family: var(--jp); font-size: 13px; color: var(--muted); }
+.hop-submit__msg:empty { display: none; }
+.hop-board { margin-top: 20px; border: 1px solid var(--line-2); border-radius: var(--r); padding: 18px 20px; }
+.hop-board[hidden] { display: none; }
+.hop-board__head { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 8px; }
+.hop-board__head h3 { margin: 0; font-size: 20px; font-weight: 600; letter-spacing: -.02em; }
+.hop-board__list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 32px; }
+.hop-board__row { display: grid; grid-template-columns: 36px minmax(0, 1fr) auto; gap: 12px; align-items: baseline; padding: 10px 0; border-bottom: 1px solid var(--line); }
+.hop-board__row.is-mine { color: var(--game); font-weight: 700; }
+.hop-board__no { font-family: var(--serif); font-style: italic; font-size: 26px; line-height: 1; }
+.hop-board__row:nth-child(-n+3) .hop-board__no { color: var(--game); }
+.hop-board__name { font-family: var(--jp); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.hop-board__score { font-size: 14px; font-variant-numeric: tabular-nums; }
+.hop-board__empty { grid-column: 1 / -1; padding: 16px 0; color: var(--muted); font-family: var(--jp); }
+.hop-board__note { margin: 12px 0 0; color: var(--muted); text-transform: none; }
+@media (max-width: 640px) { .hop-board__list { grid-template-columns: 1fr; } }
+
 .game-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: clamp(16px, 2vw, 28px); }
 .game-list .card, .game-list .card:nth-child(n) { grid-column: auto; }
 .card__media--pixel svg { image-rendering: pixelated; }

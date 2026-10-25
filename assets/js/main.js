@@ -522,6 +522,76 @@
   /* =======================================================
      Mini game: Mochi Hop
      ======================================================= */
+  /* =======================================================
+     Mochi Hop score ranking (same worker as the access ranking)
+     ======================================================= */
+  const hop = (() => {
+    const off = { start() {}, over() {} };
+    const form = $("#hop-submit"), board = $("#hop-board");
+    if (!STATS || !form || !board) return off;
+    let token = null, pending = null, period = "week";
+    const msg = $("#hop-msg"), nameEl = $("#hop-name");
+    nameEl.value = store.get("mochihop-name") || "";
+
+    const post = (path, body) => fetch(`${STATS}${path}`, { method: "POST", body: JSON.stringify(body), mode: "cors" })
+      .then((r) => r.json().catch(() => ({})).then((d) => ({ ok: r.ok, status: r.status, ...d })));
+    const render = (items, mine) => {
+      const list = $("#hop-list");
+      if (!items) { board.hidden = true; return; }
+      board.hidden = false;
+      if (!items.length) { list.innerHTML = `<li class="hop-board__empty">まだ記録がありません。1位になれるチャンスです。</li>`; return; }
+      list.innerHTML = items.map((x, i) => `
+        <li class="hop-board__row${mine && x.name === mine.name && x.score === mine.score ? " is-mine" : ""}">
+          <span class="hop-board__no">${i + 1}</span><span class="hop-board__name">${esc(x.name)}</span><span class="hop-board__score mono">${x.score}</span>
+        </li>`).join("");
+    };
+    const load = (mine) => fetch(`${STATS}/scores?game=mochihop&period=${period}`, { cache: mine ? "no-store" : "default" })
+      .then((r) => (r.ok ? r.json() : Promise.reject())).then((d) => render(d.items || [], mine)).catch(() => render(null));
+
+    board.addEventListener("click", (e) => {
+      const b = e.target.closest("[data-hop-period]");
+      if (!b) return;
+      period = b.dataset.hopPeriod;
+      $$("[data-hop-period]", board).forEach((x) => x.setAttribute("aria-pressed", x === b));
+      load();
+    });
+    new IntersectionObserver(([e], o) => { if (e.isIntersecting) { load(); o.disconnect(); } }, { rootMargin: "400px" }).observe($("#play"));
+
+    const close = () => { form.hidden = true; pending = null; };
+    $("#hop-skip").addEventListener("click", close);
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      if (!pending) return;
+      const name = nameEl.value.trim();
+      store.set("mochihop-name", name);
+      msg.textContent = "登録しています…";
+      const r = await post("/score", { token: pending.token, score: pending.score, name }).catch(() => ({ ok: false }));
+      if (r.ok) {
+        msg.textContent = `${r.rank}位で登録しました。`;
+        setTimeout(close, 1400);
+        load({ name: r.name, score: r.score });
+      } else {
+        msg.textContent = r.error === "used" ? "このプレイは登録済みです。" : "登録できませんでした。";
+      }
+    });
+
+    return {
+      start() {
+        close();
+        token = null;
+        post("/run", { game: "mochihop" }).then((r) => { if (r.ok) token = r.token; }).catch(() => {});
+      },
+      over(score) {
+        if (!token || score < 1) return;
+        pending = { token, score };
+        token = null;
+        $("#hop-score").textContent = score;
+        msg.textContent = "";
+        form.hidden = false;
+      },
+    };
+  })();
+
   const game = (() => {
     const cv = $("#game");
     const ctx = cv.getContext("2d");
@@ -530,7 +600,7 @@
     let W = 0, H = 0, dpr = 1, ground = 0, unit = 1;
     let col = {};
     let state = "idle", raf = 0, last = 0, visible = false;
-    let speed, score, best = +store.get("mochihop-best") || 0, obs, clouds, spawnIn, t = 0;
+    let speed, score, scoreF, best = +store.get("mochihop-best") || 0, obs, clouds, spawnIn, t = 0;
     const p = { x: 0, y: 0, vy: 0, size: 0, squash: 1, onGround: true };
     $("#g-best").textContent = best;
 
@@ -552,12 +622,12 @@
       draw();
     }
     function reset() {
-      speed = 6.2; score = 0; obs = []; spawnIn = 60; t = 0;
+      speed = 6.2; score = 0; scoreF = 0; obs = []; spawnIn = 60; t = 0;
       clouds = Array.from({ length: 5 }, (_, i) => ({ x: (i / 5) * W + Math.random() * 80, y: (20 + Math.random() * 90) * unit, s: .6 + Math.random() * .6 }));
       p.y = ground; p.vy = 0; p.onGround = true;
     }
     function jump() {
-      if (state !== "run") { reset(); state = "run"; last = performance.now(); loop(last); return; }
+      if (state !== "run") { reset(); state = "run"; hop.start(); last = performance.now(); loop(last); return; }
       if (p.onGround) { p.vy = -15.5 * unit; p.onGround = false; p.squash = .75; }
     }
     function drawMochi(x, y, s, sq, dead) {
@@ -640,13 +710,15 @@
       for (const o of obs) {
         if (Math.abs(o.x - p.x) < half + o.r * .7 && p.y > ground - o.h + 4 * unit && top < ground) { over(); return; }
       }
-      score += Math.round(f);
+      scoreF += f;
+      score = Math.floor(scoreF);
       $("#g-score").textContent = score;
     }
     function over() {
       state = "over";
       if (score > best) { best = score; store.set("mochihop-best", best); $("#g-best").textContent = best; }
       draw();
+      hop.over(score);
     }
     function loop(now) {
       if (state !== "run" || !visible) { raf = 0; return; }
