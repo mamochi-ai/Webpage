@@ -15,7 +15,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&family=Zen+Maru+Gothic:wght@700;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/style.css?v=20261025e">
+  <link rel="stylesheet" href="assets/css/style.css?v=20261025f">
   <script>
     try { const t = localStorage.getItem("theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
   </script>
@@ -157,9 +157,19 @@
         </div>
         <form class="hop-submit" id="hop-submit" hidden>
           <p class="hop-submit__lead">スコア <b id="hop-score">0</b> をランキングに登録しますか？</p>
-          <input id="hop-name" name="name" maxlength="12" autocomplete="nickname" placeholder="ニックネーム（12文字まで）" aria-label="ニックネーム">
-          <button type="submit" class="btn">登録する</button>
-          <button type="button" class="btn btn--ghost" id="hop-skip">今回はしない</button>
+          <p class="hop-submit__current" id="hop-current" hidden>
+            <span>名前：<b id="hop-me"></b></span>
+            <button type="button" class="hop-submit__link" id="hop-rename">名前を変える</button>
+          </p>
+          <div class="hop-submit__picker" id="hop-picker" hidden>
+            <label><span class="sr-only">名前の前半</span><select id="hop-first"></select></label>
+            <label><span class="sr-only">名前の後半</span><select id="hop-second"></select></label>
+            <button type="button" class="btn btn--ghost" id="hop-roll" aria-label="おまかせで選ぶ">🎲 おまかせ</button>
+          </div>
+          <div class="hop-submit__actions">
+            <button type="submit" class="btn">登録する</button>
+            <button type="button" class="btn btn--ghost" id="hop-skip">今回はしない</button>
+          </div>
           <p class="hop-submit__msg" id="hop-msg" role="status"></p>
         </form>
       </div>
@@ -173,7 +183,7 @@
           </div>
         </div>
         <ol class="hop-board__list" id="hop-list"><li class="hop-board__empty">読み込み中…</li></ol>
-        <p class="hop-board__note mono">登録できるのは1回のプレイにつき1回まで。ニックネームは誰でも見られます。</p>
+        <p class="hop-board__note mono">名前は用意した言葉の組み合わせから選びます。同じ名前は1人だけ。同じ端末で遊ぶと、自分の記録が更新されます。</p>
       </div>
     </section>
 
@@ -277,7 +287,7 @@
 
   <div class="toast mono" id="toast" role="status"></div>
 
-  <script src="assets/js/data.js?v=20261025e"></script>
-  <script src="assets/js/main.js?v=20261025e"></script>
+  <script src="assets/js/data.js?v=20261025f"></script>
+  <script src="assets/js/main.js?v=20261025f"></script>
 </body>
 </html>

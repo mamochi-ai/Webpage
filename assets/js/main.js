@@ -529,24 +529,49 @@
     const off = { start() {}, over() {} };
     const form = $("#hop-submit"), board = $("#hop-board");
     if (!STATS || !form || !board) return off;
-    let token = null, pending = null, period = "week";
-    const msg = $("#hop-msg"), nameEl = $("#hop-name");
-    nameEl.value = store.get("mochihop-name") || "";
+    let token = null, pending = null, period = "week", names = null, me = null;
+    const msg = $("#hop-msg"), selFirst = $("#hop-first"), selSecond = $("#hop-second");
+    const picker = $("#hop-picker"), current = $("#hop-current");
+
+    // 端末ごとの合言葉（名前の持ち主の目印）。サーバーには元に戻せない形でだけ保存される
+    let key = store.get("mochihop-key");
+    if (!/^[0-9a-f]{32}$/.test(key || "")) {
+      key = [...crypto.getRandomValues(new Uint8Array(16))].map((b) => b.toString(16).padStart(2, "0")).join("");
+      store.set("mochihop-key", key);
+    }
+    try { me = JSON.parse(store.get("mochihop-me") || "null"); } catch (e) { me = null; }
 
     const post = (path, body) => fetch(`${STATS}${path}`, { method: "POST", body: JSON.stringify(body), mode: "cors" })
       .then((r) => r.json().catch(() => ({})).then((d) => ({ ok: r.ok, status: r.status, ...d })));
-    const render = (items, mine) => {
+    const render = (items) => {
       const list = $("#hop-list");
       if (!items) { board.hidden = true; return; }
       board.hidden = false;
       if (!items.length) { list.innerHTML = `<li class="hop-board__empty">まだ記録がありません。1位になれるチャンスです。</li>`; return; }
       list.innerHTML = items.map((x, i) => `
-        <li class="hop-board__row${mine && x.name === mine.name && x.score === mine.score ? " is-mine" : ""}">
-          <span class="hop-board__no">${i + 1}</span><span class="hop-board__name">${esc(x.name)}</span><span class="hop-board__score mono">${x.score}</span>
+        <li class="hop-board__row${me && x.name === me.name ? " is-mine" : ""}">
+          <span class="hop-board__no">${i + 1}</span><span class="hop-board__name">${esc(x.name)}${me && x.name === me.name ? `<small>あなた</small>` : ""}</span><span class="hop-board__score mono">${x.score}</span>
         </li>`).join("");
     };
-    const load = (mine) => fetch(`${STATS}/scores?game=mochihop&period=${period}`, { cache: mine ? "no-store" : "default" })
-      .then((r) => (r.ok ? r.json() : Promise.reject())).then((d) => render(d.items || [], mine)).catch(() => render(null));
+    const load = (fresh) => fetch(`${STATS}/scores?game=mochihop&period=${period}`, { cache: fresh ? "no-store" : "default" })
+      .then((r) => (r.ok ? r.json() : Promise.reject())).then((d) => render(d.items || [])).catch(() => render(null));
+    const loadNames = () => names ? Promise.resolve(names) : fetch(`${STATS}/names`)
+      .then((r) => (r.ok ? r.json() : Promise.reject())).then((d) => {
+        names = d;
+        selFirst.innerHTML = d.first.map((w) => `<option>${esc(w)}</option>`).join("");
+        selSecond.innerHTML = d.second.map((w) => `<option>${esc(w)}</option>`).join("");
+        return d;
+      });
+    const roll = () => {
+      if (!names) return;
+      selFirst.value = names.first[Math.floor(Math.random() * names.first.length)];
+      selSecond.value = names.second[Math.floor(Math.random() * names.second.length)];
+    };
+    const showPicker = (open) => {
+      picker.hidden = !open;
+      current.hidden = open || !me;
+      if (open && me) { selFirst.value = me.first; selSecond.value = me.second; }
+    };
 
     board.addEventListener("click", (e) => {
       const b = e.target.closest("[data-hop-period]");
@@ -559,19 +584,42 @@
 
     const close = () => { form.hidden = true; pending = null; };
     $("#hop-skip").addEventListener("click", close);
+    $("#hop-roll").addEventListener("click", roll);
+    $("#hop-rename").addEventListener("click", () => showPicker(true));
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
       if (!pending) return;
-      const name = nameEl.value.trim();
-      store.set("mochihop-name", name);
-      msg.textContent = "登録しています…";
-      const r = await post("/score", { token: pending.token, score: pending.score, name }).catch(() => ({ ok: false }));
-      if (r.ok) {
-        msg.textContent = `${r.rank}位で登録しました。`;
-        setTimeout(close, 1400);
-        load({ name: r.name, score: r.score });
-      } else {
-        msg.textContent = r.error === "used" ? "このプレイは登録済みです。" : "登録できませんでした。";
+      const btn = $("button[type=submit]", form);
+      btn.disabled = true;
+      try {
+        if (!picker.hidden) {
+          const first = selFirst.value, second = selSecond.value;
+          msg.textContent = "名前を確認しています…";
+          const r = await post("/player", { key, first, second }).catch(() => ({ ok: false }));
+          if (!r.ok) {
+            msg.textContent = r.error === "taken" ? `「${first}${second}」はほかの人が使っています。別の組み合わせにしてください。` : "名前を登録できませんでした。";
+            return;
+          }
+          me = { name: r.name, first, second };
+          store.set("mochihop-me", JSON.stringify(me));
+          $("#hop-me").textContent = me.name;
+          showPicker(false);
+        }
+        msg.textContent = "登録しています…";
+        const r = await post("/score", { token: pending.token, score: pending.score, key }).catch(() => ({ ok: false }));
+        if (r.ok) {
+          msg.textContent = r.prev == null ? `初登録！ ${r.rank}位です。` : r.score > r.prev ? `自己ベスト更新！ ${r.rank}位です。` : `登録しました。自己ベストは ${r.best}（${r.rank}位）のままです。`;
+          pending = null;
+          setTimeout(close, 1800);
+          load(true);
+        } else if (r.error === "player") {
+          me = null; store.set("mochihop-me", "null"); showPicker(true); roll();
+          msg.textContent = "名前を選び直してください。";
+        } else {
+          msg.textContent = r.error === "used" ? "このプレイは登録済みです。" : "登録できませんでした。";
+        }
+      } finally {
+        btn.disabled = false;
       }
     });
 
@@ -587,7 +635,12 @@
         token = null;
         $("#hop-score").textContent = score;
         msg.textContent = "";
-        form.hidden = false;
+        loadNames().then(() => {
+          if (me) $("#hop-me").textContent = me.name;
+          showPicker(!me);
+          if (!me) roll();
+          form.hidden = false;
+        }).catch(() => {});
       },
     };
   })();

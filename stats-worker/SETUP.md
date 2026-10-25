@@ -51,7 +51,13 @@ statsApi: "https://mamochi-stats.xxxx.workers.dev",
 `worker.js` にスコア用の機能も入っています。Worker を作ったあとで `worker.js` が更新された場合は、
 「Edit code」で中身を新しい `worker.js` に貼り替えて「Deploy」してください（データベースやバインディングはそのままで大丈夫です）。
 
+- 名前は用意した言葉の組み合わせ（「はやい」＋「ビーバー」など）から選ぶだけで、自由入力はできません
+  （言葉の一覧は `worker.js` の `NAME_FIRST` / `NAME_SECOND`）
+- 同じ名前は 1 人だけ。名前は、端末に保存した合言葉（元に戻せない形でサーバーに保存）とセットで予約されます
+- 同じ端末で遊ぶと、同じ名前で記録が更新されます。ランキングには 1 人 1 行（最高点）が載ります
+- 別の端末やブラウザのデータを消したあとは、別の人として扱われます
 - ゲーム開始時に整理券を受け取り、ゲームオーバー後に 1 回だけスコアを登録できます
 - 開始からの経過時間に対してありえない点数（1 秒あたり約 60 点を超えるもの）は受け付けません
-- ニックネームは 12 文字まで。不適切な名前を消したいときは、D1 の画面（mamochi-stats →「Console」）で
-  `DELETE FROM scores WHERE name = '消したい名前';` を実行してください
+- 記録を消したいときは、D1 の画面（mamochi-stats →「Console」）で
+  `DELETE FROM plays WHERE player = (SELECT id FROM players WHERE name = 'はやいビーバー');` を実行してください
+- 前の版で使っていた `scores` 表（自由入力の名前）はもう使いません。`DROP TABLE scores;` で消して大丈夫です

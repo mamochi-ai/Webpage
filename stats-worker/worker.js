@@ -7,10 +7,14 @@
    GET  /ranking?days=30   直近 30 日（days=all で累計）の回数
 
    おまけゲーム Mochi Hop のスコア
+   GET  /names    名前に使える言葉の一覧（自由入力はできない。前半＋後半の組み合わせ）
+   POST /player   { key, first, second } 名前を予約する（同じ key なら名前の付け替え）
+                  key は端末で作った合言葉。サーバーには元に戻せない形でだけ保存する
+                  ほかの人が予約済みの名前は使えない
    POST /run      ゲーム開始の合図。署名つきの整理券（token）を返す
-   POST /score    { token, name, score } 整理券 1 枚につき 1 回だけ登録できる
+   POST /score    { token, key, score } 整理券 1 枚につき 1 回だけ登録できる
                   開始からの経過時間でありえない点数（1 秒あたり約 60 点が上限）は受け付けない
-   GET  /scores?period=week   今週（直近 7 日）の上位 10（period=all で全期間）
+   GET  /scores?period=week   今週（直近 7 日）の上位 10（period=all で全期間）。1 人 1 行（最高点）
 
    保存するのは「日付・作品・種類・回数」だけ。IP アドレスや端末の情報は保存しない
    （1 日 1 回の判定には、IP などを推測できない形に変換した値を使い、2 日で消す）。
@@ -29,12 +33,23 @@ const SCHEMA = [
   "CREATE TABLE IF NOT EXISTS hits (day TEXT NOT NULL, id TEXT NOT NULL, kind TEXT NOT NULL, n INTEGER NOT NULL DEFAULT 0, PRIMARY KEY (day, id, kind))",
   "CREATE TABLE IF NOT EXISTS seen (day TEXT NOT NULL, k TEXT NOT NULL, PRIMARY KEY (day, k))",
   "CREATE TABLE IF NOT EXISTS meta (key TEXT PRIMARY KEY, value TEXT NOT NULL)",
-  "CREATE TABLE IF NOT EXISTS scores (id INTEGER PRIMARY KEY AUTOINCREMENT, game TEXT NOT NULL, name TEXT NOT NULL, score INTEGER NOT NULL, day TEXT NOT NULL, run TEXT NOT NULL UNIQUE)",
-  "CREATE INDEX IF NOT EXISTS scores_rank ON scores (game, score DESC)",
+  "CREATE TABLE IF NOT EXISTS players (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL UNIQUE, keyhash TEXT NOT NULL UNIQUE, created TEXT NOT NULL)",
+  "CREATE TABLE IF NOT EXISTS plays (id INTEGER PRIMARY KEY AUTOINCREMENT, game TEXT NOT NULL, player INTEGER NOT NULL, score INTEGER NOT NULL, day TEXT NOT NULL, run TEXT NOT NULL UNIQUE)",
+  "CREATE INDEX IF NOT EXISTS plays_rank ON plays (game, day, score DESC)",
 ];
 const GAMES = new Set(["mochihop"]);
 const POINTS_PER_SEC = 60;
-const NAME_MAX = 12;
+const KEY_RE = /^[0-9a-f]{32,64}$/;
+
+/** 名前に使える言葉（前半＋後半をつなげて「はやいビーバー」のようにする） */
+const NAME_FIRST = [
+  "はやい", "ねむい", "まじめな", "ごきげん", "くいしんぼう", "こわがり", "のんびり", "ちいさな", "おおきな", "ふわふわ",
+  "ぴかぴか", "はらぺこ", "まいごの", "てれやの", "げんきな", "しずかな", "すばやい", "ほかほか", "ひんやり", "ぽかぽか",
+];
+const NAME_SECOND = [
+  "ビーバー", "おもち", "だんご", "トラック", "ピンポン", "こけし", "ゆきうさぎ", "みかん",
+  "おにぎり", "たいやき", "かえる", "ねこ", "いぬ", "ペンギン", "ロボット", "てるてる",
+];
 let ready = null;
 
 function setup(db) {
@@ -67,13 +82,14 @@ async function hmac(db, text) {
   return [...new Uint8Array(sig)].map((b) => b.toString(16).padStart(2, "0")).join("");
 }
 
-function cleanName(raw) {
-  const name = String(raw || "")
-    .normalize("NFKC")
-    .replace(/[\u0000-\u001f\u007f-\u009f\u200b-\u200f\u2028-\u202e\u2066-\u2069<>]/g, "")
-    .replace(/\s+/g, " ")
-    .trim();
-  return [...name].slice(0, NAME_MAX).join("") || "ななしのビーバー";
+/** 一覧の言葉からだけ名前を作る（一覧にない言葉は null） */
+function makeName(first, second) {
+  return NAME_FIRST.includes(first) && NAME_SECOND.includes(second) ? `${first}${second}` : null;
+}
+
+async function playerByKey(db, key) {
+  if (!KEY_RE.test(key)) return null;
+  return db.prepare("SELECT id, name FROM players WHERE keyhash = ?").bind(await sha256(`player|${key}`)).first();
 }
 
 function cors(origin) {
@@ -130,6 +146,26 @@ async function runStart(request, env, headers) {
   return json({ token: `${head}.${await hmac(env.DB, head)}` }, 200, headers);
 }
 
+async function player(request, env, headers) {
+  if (!ALLOWED_ORIGINS.includes(request.headers.get("Origin") || "")) return json({ error: "origin" }, 403, headers);
+  const body = await readBody(request);
+  const key = String(body?.key || "");
+  const name = makeName(String(body?.first || ""), String(body?.second || ""));
+  if (!KEY_RE.test(key) || !name) return json({ error: "input" }, 400, headers);
+
+  const me = await playerByKey(env.DB, key);
+  if (me && me.name === name) return json({ ok: true, name }, 200, headers);
+  const owner = await env.DB.prepare("SELECT id FROM players WHERE name = ?").bind(name).first();
+  if (owner) return json({ error: "taken" }, 409, headers);
+  try {
+    if (me) await env.DB.prepare("UPDATE players SET name = ? WHERE id = ?").bind(name, me.id).run();
+    else await env.DB.prepare("INSERT INTO players (name, keyhash, created) VALUES (?, ?, ?)").bind(name, await sha256(`player|${key}`), jstDay()).run();
+  } catch {
+    return json({ error: "taken" }, 409, headers); // 同時に同じ名前が予約された
+  }
+  return json({ ok: true, name }, 200, headers);
+}
+
 async function scoreSubmit(request, env, headers) {
   if (!ALLOWED_ORIGINS.includes(request.headers.get("Origin") || "")) return json({ error: "origin" }, 403, headers);
   const body = await readBody(request);
@@ -145,18 +181,20 @@ async function scoreSubmit(request, env, headers) {
   if (elapsed > 3600) return json({ error: "expired" }, 400, headers);
   if (score > elapsed * POINTS_PER_SEC * 1.05 + 30) return json({ error: "score" }, 400, headers);
 
-  const name = cleanName(body?.name);
-  const run = await sha256(head);
+  const me = await playerByKey(env.DB, String(body?.key || ""));
+  if (!me) return json({ error: "player" }, 400, headers);
+  const prev = await env.DB.prepare("SELECT MAX(score) AS best FROM plays WHERE game = ? AND player = ?").bind(game, me.id).first();
   const res = await env.DB
-    .prepare("INSERT OR IGNORE INTO scores (game, name, score, day, run) VALUES (?, ?, ?, ?, ?)")
-    .bind(game, name, score, jstDay(), run)
+    .prepare("INSERT OR IGNORE INTO plays (game, player, score, day, run) VALUES (?, ?, ?, ?, ?)")
+    .bind(game, me.id, score, jstDay(), await sha256(head))
     .run();
   if (res.meta.changes !== 1) return json({ error: "used" }, 409, headers);
+  const best = await env.DB.prepare("SELECT MAX(score) AS best FROM plays WHERE game = ? AND player = ?").bind(game, me.id).first();
   const rank = await env.DB
-    .prepare("SELECT COUNT(*) + 1 AS rank FROM scores WHERE game = ? AND score > ?")
-    .bind(game, score)
+    .prepare("SELECT COUNT(*) + 1 AS rank FROM (SELECT player, MAX(score) AS s FROM plays WHERE game = ? GROUP BY player) WHERE s > ?")
+    .bind(game, best.best)
     .first();
-  return json({ ok: true, name, score, rank: rank.rank }, 200, headers);
+  return json({ ok: true, name: me.name, score, prev: prev.best, best: best.best, rank: rank.rank }, 200, headers);
 }
 
 async function scoreList(url, env, headers) {
@@ -165,7 +203,7 @@ async function scoreList(url, env, headers) {
   const period = url.searchParams.get("period") === "all" ? "all" : "week";
   const from = period === "all" ? "0000-00-00" : jstDay(-6);
   const { results } = await env.DB
-    .prepare("SELECT name, MAX(score) AS score, MIN(day) AS day FROM scores WHERE game = ? AND day >= ? GROUP BY name ORDER BY score DESC LIMIT 10")
+    .prepare("SELECT p.name AS name, MAX(s.score) AS score FROM plays s JOIN players p ON p.id = s.player WHERE s.game = ? AND s.day >= ? GROUP BY s.player ORDER BY score DESC LIMIT 10")
     .bind(game, from)
     .all();
   return json({ game, period, items: results }, 200, { ...headers, "Cache-Control": "public, max-age=30" });
@@ -201,6 +239,8 @@ export default {
       await setup(env.DB);
       if (request.method === "POST" && url.pathname === "/hit") return await hit(request, env, headers);
       if (request.method === "GET" && url.pathname === "/ranking") return await ranking(url, env, headers);
+      if (request.method === "GET" && url.pathname === "/names") return json({ first: NAME_FIRST, second: NAME_SECOND }, 200, { ...headers, "Cache-Control": "public, max-age=3600" });
+      if (request.method === "POST" && url.pathname === "/player") return await player(request, env, headers);
       if (request.method === "POST" && url.pathname === "/run") return await runStart(request, env, headers);
       if (request.method === "POST" && url.pathname === "/score") return await scoreSubmit(request, env, headers);
       if (request.method === "GET" && url.pathname === "/scores") return await scoreList(url, env, headers);
