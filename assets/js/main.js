@@ -476,7 +476,7 @@
     $("#stk-info").innerHTML = `
       <h3>${esc(w.title)}</h3>
       <p>${esc(w.summary)}</p>
-      <span class="mono">${esc(w.stack.join(" / "))} — ${w.year}</span>
+      <span class="mono">${esc(w.stack.join(" / "))} — ${w.year}${/生成AI/.test(w.role) ? " / イラストは生成AIを使用" : ""}</span>
       <a class="btn btn--line" href="${esc(w.url)}" target="_blank" rel="noopener">LINE STOREで見る ↗</a>`;
     const grid = $("#stk-grid");
     grid.innerHTML = set.stickers.map((s, i) =>
