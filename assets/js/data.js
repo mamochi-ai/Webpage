@@ -92,6 +92,21 @@ window.WORKS = [
     image: "assets/img/works/miseru-techo.webp",
     local: true,
   },
+  {
+    id: "note-transit",
+    type: "web",
+    title: "わたしの記事路線図",
+    titleJa: "NOTE TRANSIT",
+    year: 2026,
+    summary: "noteの記事を、テーマ別の地下鉄路線図に変える。",
+    description:
+      "noteからエクスポートしたZIPを読み込むと、記事をテーマごとの路線に分けて、地下鉄の路線図のように並べます。駅をタップすると記事へ。「話題でつなぐ／時間でたどる／意外な乗換」で見え方を切り替えられ、できた路線図はリンクや画像で人に見せられます。分類にAIは使わず、ZIPは端末の中だけで解析します。ZIPがなくても、架空の記事のサンプルで試せます。",
+    role: "企画・制作",
+    stack: ["JavaScript", "SVG", "fflate（ZIP展開）"],
+    url: "https://mamochi-ai.github.io/note_station/",
+    image: "assets/img/works/note-transit.webp",
+    local: true,
+  },
 
   {
     id: "ippin",
